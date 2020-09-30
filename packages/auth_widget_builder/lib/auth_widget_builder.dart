@@ -46,16 +46,15 @@ class AuthWidgetBuilder<T> extends StatelessWidget {
   }
 }
 
-typedef EmailVerificationFunction = bool Function<T>(T user);
-
 /// Builds the signed-in or non signed-in UI, depending on the user snapshot.
-/// This widget should be below the [MaterialApp].
+/// Abstracting this logic away from the [AuthWidgetBuilder] allows other ui
+/// elements / widgets to sit above the [AuthWidget].
 /// An [AuthWidgetBuilder] ancestor is required for this widget to work.
 class AuthWidget<T> extends StatelessWidget {
   final AsyncSnapshot<T> userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
-  final EmailVerificationFunction emailVerificationFunction;
+  final bool Function(T user) emailVerificationFunction;
   final WidgetBuilder emailVerificationBuilder;
   final Function signOut;
 
