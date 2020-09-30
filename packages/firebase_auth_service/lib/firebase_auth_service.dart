@@ -8,8 +8,22 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
-import 'connect_credentials_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+/// Model to store authentication credentials to be linked to a existing email
+/// account in firebasebase authentication
+class LinkCredentials {
+  String email;
+  List<String> providers;
+  AuthCredential credentialToLink;
+
+  LinkCredentials({
+    @required this.email,
+    @required this.providers,
+    @required this.credentialToLink,
+  });
+}
 
 /// Authentication service for handling authorised access to the application
 /// Allows authorisation via email/pass, Facebook and Google as identity providers

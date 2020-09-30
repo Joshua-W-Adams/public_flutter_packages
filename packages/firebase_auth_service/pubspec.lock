@@ -125,15 +125,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_facebook_login:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "v1.3.0-web"
-      resolved-ref: "9d2c84ad40c252ab3cbfece163259899479985a3"
-      url: "https://github.com/romulojjunior/flutter_facebook_login.git"
-    source: git
-    version: "3.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
