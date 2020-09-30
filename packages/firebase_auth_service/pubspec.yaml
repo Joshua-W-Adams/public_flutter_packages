@@ -15,10 +15,10 @@ dependencies:
   cloud_firestore:
   firebase_auth:
   google_sign_in: ^4.1.0
-  flutter_facebook_login:
-      git:
-        url: https://github.com/romulojjunior/flutter_facebook_login.git
-        ref: v1.3.0-web
+  # flutter_facebook_login:
+  #     git:
+  #       url: https://github.com/romulojjunior/flutter_facebook_login.git
+  #       ref: v1.3.0-web
 
 dev_dependencies:
   flutter_test:
