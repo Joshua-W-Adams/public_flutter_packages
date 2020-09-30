@@ -11,11 +11,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider:
   general_widgets:
       git:
         url: https://github.com/Joshua-W-Adams/public_flutter_packages.git
         path: packages/general_widgets
-
+  alert_dialogs:
+      git:
+        url: https://github.com/Joshua-W-Adams/public_flutter_packages.git
+        path: packages/alert_dialogs
+        
 dev_dependencies:
   flutter_test:
     sdk: flutter
