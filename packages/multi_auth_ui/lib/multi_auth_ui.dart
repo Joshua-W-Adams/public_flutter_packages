@@ -12,3 +12,4 @@ part 'email_verification_page.dart';
 part 'email_password_sign_in_model.dart';
 part 'email_password_sign_in_page.dart';
 part 'email_password_validator.dart';
+part 'auth_options_widget.dart';
