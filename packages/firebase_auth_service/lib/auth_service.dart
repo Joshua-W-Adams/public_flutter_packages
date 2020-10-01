@@ -21,6 +21,7 @@ class AuthService<T> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   // 3rd party authentication module instances
   // final fb = FacebookLogin();
+  final FacebookLogin facebookLogin = FacebookLogin();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // create new stream that checks for authorisation state changes AND fetches
@@ -293,6 +294,99 @@ class AuthService<T> {
   //       break;
   //   }
   // }
+
+  Future<void> signInWithFacebook({
+    AuthCredential authCredentialtoLink,
+  }) async {
+    // facebook login not supported by web.
+    if (kIsWeb) {
+      // throw stops current function execution
+      throw PlatformException(
+        code: 'LOGIN_METHOD_NOT_SUPPORTED_ON_WEB',
+        message:
+            'Sign in with Facebook is currently not supported on web. Please select one of the other sign in methods.',
+      );
+    }
+
+    // hold the instance of the authenticated firebase user
+    User user;
+
+    // Force the users to login using the login dialog based on WebViews.
+    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+
+    // log user out of existing facebook account
+    facebookLogin.logOut();
+
+    // commence the facebook authorisation using the OAuth standard
+    final result = await facebookLogin.logIn(['email']);
+
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accessToken = result.accessToken;
+        // print('''
+        //  Logged in!
+
+        //  Token: ${accessToken.token}
+        //  User id: ${accessToken.userId}
+        //  Expires: ${accessToken.expires}
+        //  Permissions: ${accessToken.permissions}
+        //  Declined permissions: ${accessToken.declinedPermissions}
+        //  ''');
+
+        AuthCredential credential =
+            FacebookAuthProvider.credential(accessToken.token);
+        try {
+          user = (await _firebaseAuth.signInWithCredential(credential)).user;
+          // if authorisation credetials from a different provider passed. Link them.
+          if (user != null && authCredentialtoLink != null) {
+            user.linkWithCredential(authCredentialtoLink);
+          }
+        } catch (error) {
+          if (error is PlatformException &&
+              error.code == "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") {
+            // fetch users details from facebook graph api
+            var graphResponse = await http.get(
+                'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${accessToken.token}');
+            // parse json response to object
+            Map<String, dynamic> map = jsonDecode(graphResponse.body);
+            // get email address
+            String email = map['email'];
+            // fetch providers for the email
+            List<String> providers =
+                await _firebaseAuth.fetchSignInMethodsForEmail(email);
+            // store details for linking credentials
+            LinkCredentials linkCredentials = LinkCredentials(
+              email: email,
+              providers: providers,
+              credentialToLink: credential,
+            );
+            // throw exception so link with credentials page can be generated
+            throw PlatformException(
+              code: "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL",
+              message:
+                  "Account exists with different credentials. Please log in with the correct account provider.",
+              details: linkCredentials,
+            );
+          }
+          // re throw error to allow catching by other functions
+          rethrow;
+        }
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        throw PlatformException(
+          code: 'FB_USER_CANCELED_LOGIN',
+          message: 'Login cancelled by the user.',
+        );
+        break;
+      case FacebookLoginStatus.error:
+        throw PlatformException(
+          code: 'FB_UNKNOWN_LOGIN_ERROR',
+          message: 'Something went wrong with the login process.\n'
+              'Here\'s the error Facebook gave us: ${result.errorMessage}',
+        );
+        break;
+    }
+  }
 
   // ********************************** Sign Out methods **********************************
   Future<void> signOut() async {
