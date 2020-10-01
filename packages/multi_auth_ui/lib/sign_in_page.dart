@@ -64,7 +64,7 @@ class SignInPage extends StatelessWidget {
       alignment: Alignment.topCenter,
       child: Container(
         height: appTextHeight,
-        child: appIconFilePath == null
+        child: appTextFilePath == null
             ? Text('')
             : Image.asset(
                 appTextFilePath,
