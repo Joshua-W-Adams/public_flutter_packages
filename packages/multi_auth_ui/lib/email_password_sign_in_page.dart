@@ -44,7 +44,6 @@ class EmailPasswordSignInPage extends StatefulWidget {
 }
 
 class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
-  final FocusScopeNode _node = FocusScopeNode();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -54,7 +53,6 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
 
   @override
   void dispose() {
-    _node.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -91,20 +89,6 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     }
   }
 
-  void _emailEditingComplete() {
-    if (model.canSubmitEmail) {
-      _node.nextFocus();
-    }
-  }
-
-  void _passwordEditingComplete() {
-    if (!model.canSubmitEmail) {
-      _node.previousFocus();
-      return;
-    }
-    _submit();
-  }
-
   void _updateFormType(EmailPasswordSignInFormType formType) {
     model.updateFormType(formType);
     _emailController.clear();
@@ -130,7 +114,6 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       keyboardType: TextInputType.emailAddress,
       keyboardAppearance: Brightness.light,
       onChanged: model.updateEmail,
-      onEditingComplete: _emailEditingComplete,
       inputFormatters: <TextInputFormatter>[
         model.emailInputFormatter,
       ],
@@ -154,58 +137,53 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       ),
       obscureText: true,
       autocorrect: false,
-      textInputAction: TextInputAction.done,
       keyboardAppearance: Brightness.light,
       onChanged: model.updatePassword,
-      onEditingComplete: _passwordEditingComplete,
     );
   }
 
   Widget _buildContent() {
-    return FocusScope(
-      node: _node,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SizedBox(height: 16.0),
+        _buildEmailField(),
+        if (model.formType !=
+            EmailPasswordSignInFormType.forgotPassword) ...<Widget>[
           SizedBox(height: 16.0),
-          _buildEmailField(),
-          if (model.formType !=
-              EmailPasswordSignInFormType.forgotPassword) ...<Widget>[
-            SizedBox(height: 16.0),
-            _buildPasswordField(),
-          ],
-          SizedBox(height: 16.0),
-          CustomRaisedButton(
-            key: Key('primary-button'),
-            child: Text(model.primaryButtonText),
-            loading: model.isLoading,
-            onPressed: model.isLoading ? null : _submit,
-            color: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-          ),
-          SizedBox(height: 16.0),
+          _buildPasswordField(),
+        ],
+        SizedBox(height: 16.0),
+        CustomRaisedButton(
+          key: Key('primary-button'),
+          child: Text(model.primaryButtonText),
+          loading: model.isLoading,
+          onPressed: model.isLoading ? null : _submit,
+          color: Theme.of(context).primaryColor,
+          textColor: Colors.white,
+        ),
+        SizedBox(height: 16.0),
+        FlatButton(
+          key: Key('secondary-button'),
+          child: Text(model.secondaryButtonText),
+          onPressed: model.isLoading
+              ? null
+              : () {
+                  return _updateFormType(model.secondaryActionFormType);
+                },
+        ),
+        if (model.formType == EmailPasswordSignInFormType.signIn)
           FlatButton(
-            key: Key('secondary-button'),
-            child: Text(model.secondaryButtonText),
+            key: Key('tertiary-button'),
+            child: Text('Forgot your password?'),
             onPressed: model.isLoading
                 ? null
                 : () {
-                    return _updateFormType(model.secondaryActionFormType);
+                    return _updateFormType(
+                        EmailPasswordSignInFormType.forgotPassword);
                   },
           ),
-          if (model.formType == EmailPasswordSignInFormType.signIn)
-            FlatButton(
-              key: Key('tertiary-button'),
-              child: Text('Forgot your password?'),
-              onPressed: model.isLoading
-                  ? null
-                  : () {
-                      return _updateFormType(
-                          EmailPasswordSignInFormType.forgotPassword);
-                    },
-            ),
-        ],
-      ),
+      ],
     );
   }
 
