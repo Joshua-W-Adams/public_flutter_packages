@@ -18,6 +18,9 @@ dependencies:
   flutter_facebook_login: ^3.0.0
   sign_in_with_apple: ^2.5.2
   # old facebook sign in web support library
+  # https://stackoverflow.com/questions/62471919/flutter-facebook-login-in-web
+  # flutter facebook login is causing errors in the build process of the application which
+  # causes the firebase_core library to throw no Firebase.initializeApp() exceptions
   # flutter_facebook_login:
   #     git:
   #       url: https://github.com/romulojjunior/flutter_facebook_login.git
