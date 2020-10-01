@@ -388,6 +388,67 @@ class AuthService<T> {
     }
   }
 
+  Future<void> signInWithApple({
+    AuthCredential authCredentialtoLink,
+  }) async {
+    // login not supported by web.
+    if (kIsWeb) {
+      // throw stops current function execution
+      throw PlatformException(
+        code: 'LOGIN_METHOD_NOT_SUPPORTED_ON_WEB',
+        message:
+            'Sign in with Apple is currently not supported on web. Please select one of the other sign in methods.',
+      );
+    }
+
+    // commence the apple authorisation
+    final AuthorizationCredentialAppleID appleIdCredential =
+        await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+
+    final oAuthProvider = OAuthProvider('apple.com');
+    final credential = oAuthProvider.credential(
+      idToken: appleIdCredential.identityToken,
+      accessToken: appleIdCredential.authorizationCode,
+    );
+
+    try {
+      User user = (await _firebaseAuth.signInWithCredential(credential)).user;
+      // if authorisation credetials from a different provider passed. Link them.
+      if (user != null && authCredentialtoLink != null) {
+        user.linkWithCredential(authCredentialtoLink);
+      }
+    } catch (error) {
+      if (error is PlatformException &&
+          error.code == "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") {
+        // get email address
+        String email = appleIdCredential.email;
+        // fetch providers for the email
+        List<String> providers =
+            await _firebaseAuth.fetchSignInMethodsForEmail(email);
+        // store details for linking credentials
+        LinkCredentials linkCredentials = LinkCredentials(
+          email: email,
+          providers: providers,
+          credentialToLink: credential,
+        );
+        // throw exception so link with credentials page can be generated
+        throw PlatformException(
+          code: "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL",
+          message:
+              "Account exists with different credentials. Please log in with the correct account provider.",
+          details: linkCredentials,
+        );
+      }
+      // re throw error to allow catching by other functions
+      rethrow;
+    }
+  }
+
   // ********************************** Sign Out methods **********************************
   Future<void> signOut() async {
     // if auth service is down force user object to be null

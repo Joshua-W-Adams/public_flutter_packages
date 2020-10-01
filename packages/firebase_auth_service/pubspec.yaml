@@ -16,6 +16,7 @@ dependencies:
   firebase_auth:
   google_sign_in: ^4.1.0
   flutter_facebook_login: ^3.0.0
+  sign_in_with_apple: ^2.5.2
   # old facebook sign in web support library
   # flutter_facebook_login:
   #     git:
