@@ -54,7 +54,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       _isLoading = false;
       setState(() {});
       // redirect user to the account credential linking process.
-      if (e.code == widget.linkCredentialsErrorMessage) {
+      if (e is PlatformException &&
+          e.code == widget.linkCredentialsErrorMessage) {
         if (widget.linkCredentialsCallback != null) {
           widget.linkCredentialsCallback(e.details);
         }
@@ -121,7 +122,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Container(
         height: 25.0,
         width: 25.0,
-        child: Image.asset('assets/img/google_icon.png'),
+        child:
+            Image.asset('assets/img/google_icon.png', package: 'multi_auth_ui'),
       ),
       disabledColor: Colors.grey[100],
       onPressed: _isLoading
@@ -144,7 +146,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Container(
         height: 25.0,
         width: 25.0,
-        child: Image.asset('assets/img/apple_icon.png'),
+        child:
+            Image.asset('assets/img/apple_icon.png', package: 'multi_auth_ui'),
       ),
       disabledColor: Colors.grey[100],
       onPressed: _isLoading
@@ -167,7 +170,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Container(
         height: 25.0,
         width: 25.0,
-        child: Image.asset('assets/img/facebook_icon.png'),
+        child: Image.asset('assets/img/facebook_icon.png',
+            package: 'multi_auth_ui'),
       ),
       disabledColor: Colors.grey[100],
       onPressed: _isLoading
