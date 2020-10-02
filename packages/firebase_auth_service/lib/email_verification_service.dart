@@ -47,6 +47,7 @@ class EmailVerificationService {
         if (firebaseUser.emailVerified) {
           _isEmailVerified = firebaseUser.emailVerified;
           timer.cancel();
+          dispose();
           // add email verificaiton status to stream
           _add();
         }
