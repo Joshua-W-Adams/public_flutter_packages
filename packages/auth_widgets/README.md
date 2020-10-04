@@ -1,4 +1,4 @@
-# auth_widget_builder
+# auth_widgets
 
 A new Flutter package project.
 

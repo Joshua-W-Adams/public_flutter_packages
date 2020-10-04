@@ -1,4 +1,4 @@
-name: auth_widget_builder
+name: auth_widgets
 description: A new Flutter package project.
 version: 0.0.1
 author:
@@ -16,7 +16,7 @@ dependencies:
     git:
       url: https://github.com/Joshua-W-Adams/public_flutter_packages.git
       path: packages/general_widgets
-
+      
 dev_dependencies:
   flutter_test:
     sdk: flutter
