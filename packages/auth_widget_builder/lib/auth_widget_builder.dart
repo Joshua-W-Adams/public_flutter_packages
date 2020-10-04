@@ -1,7 +1,7 @@
 library auth_widget_builder;
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:general_widgets/general_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -17,7 +17,8 @@ import 'package:provider/single_child_widget.dart';
 class AuthWidgetBuilder<T> extends StatelessWidget {
   final Widget Function(BuildContext, AsyncSnapshot<T>) builder;
   final Stream<T> authStream;
-  final List<SingleChildWidget> Function(BuildContext, T) userProvidersBuilder;
+  final List<SingleChildWidget> Function(BuildContext, AsyncSnapshot<T>)
+      userProvidersBuilder;
 
   const AuthWidgetBuilder({
     Key key,
@@ -31,11 +32,10 @@ class AuthWidgetBuilder<T> extends StatelessWidget {
     return StreamBuilder<T>(
       stream: authStream,
       builder: (context, snapshot) {
-        final T user = snapshot.data;
-        if (user != null) {
+        if (snapshot.data != null) {
           return MultiProvider(
             providers: userProvidersBuilder != null
-                ? userProvidersBuilder(context, user)
+                ? userProvidersBuilder(context, snapshot)
                 : [],
             child: builder(context, snapshot),
           );
@@ -50,12 +50,10 @@ class AuthWidgetBuilder<T> extends StatelessWidget {
 /// Abstracting this logic away from the [AuthWidgetBuilder] allows other ui
 /// elements / widgets to sit above the [AuthWidget].
 /// An [AuthWidgetBuilder] ancestor is required for this widget to work.
-class AuthWidget<T> extends StatelessWidget {
-  final AsyncSnapshot<T> userSnapshot;
+class AuthWidget extends StatelessWidget {
+  final AsyncSnapshot userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
-  final bool Function(T user) emailVerificationFunction;
-  final WidgetBuilder emailVerificationBuilder;
   final Function signOut;
 
   const AuthWidget({
@@ -63,8 +61,6 @@ class AuthWidget<T> extends StatelessWidget {
     @required this.userSnapshot,
     @required this.signedInBuilder,
     @required this.nonSignedInBuilder,
-    @required this.emailVerificationFunction,
-    @required this.emailVerificationBuilder,
     @required this.signOut,
   }) : super(key: key);
 
@@ -76,83 +72,14 @@ class AuthWidget<T> extends StatelessWidget {
     if (userSnapshot.connectionState == ConnectionState.active) {
       // user has been authentication onto the system with authentication service
       if (userSnapshot.hasData == true) {
-        // confirm if email verification check is required
-        bool _emailVerfied = emailVerificationFunction(userSnapshot.data);
-        if (_emailVerfied) {
-          return emailVerificationBuilder(context);
-        } else {
-          return signedInBuilder(context);
-        }
+        return signedInBuilder(context);
       }
       return nonSignedInBuilder(context);
     }
     // pending authentication connection screen in case of errors with auth
     // service availability
-    return AwaitingAuthentication(signOut: signOut);
-  }
-}
-
-class AwaitingAuthentication extends StatelessWidget {
-  final Function signOut;
-
-  AwaitingAuthentication({
-    @required this.signOut,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 32.0,
-                bottom: 32.0,
-              ),
-              child: Text(
-                'Loading...',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-            CircularProgressIndicator(),
-            // if for some reason the auth service is down and a user object
-            // is not returned. Allow user to return to the login page and
-            // try again.
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 32.0,
-                  bottom: 32.0,
-                ),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Go To Login Page',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[600],
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        if (signOut != null) {
-                          signOut();
-                        }
-                      },
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
+    return Awaiting(
+      footerTextOnTap: signOut,
     );
   }
 }
