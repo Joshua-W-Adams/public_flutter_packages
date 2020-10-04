@@ -13,6 +13,5 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:math';
 
 part 'firebase_auth_service.dart';
-part 'firebase_email_verification_service.dart';
 part 'auth_service_base_class.dart';
 part 'mock_auth_service.dart';
