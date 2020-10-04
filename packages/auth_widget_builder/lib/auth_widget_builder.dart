@@ -32,11 +32,9 @@ class AuthWidgetBuilder<T> extends StatelessWidget {
     return StreamBuilder<T>(
       stream: authStream,
       builder: (context, snapshot) {
-        if (snapshot.data != null) {
+        if (snapshot.data != null && userProvidersBuilder != null) {
           return MultiProvider(
-            providers: userProvidersBuilder != null
-                ? userProvidersBuilder(context, snapshot)
-                : [],
+            providers: userProvidersBuilder(context, snapshot),
             child: builder(context, snapshot),
           );
         }
