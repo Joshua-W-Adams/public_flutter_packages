@@ -1,4 +1,4 @@
-part of firebase_auth_service;
+part of auth_service;
 
 /// Model to store authentication credentials to be linked to a existing email
 /// account in firebasebase authentication
@@ -16,56 +16,31 @@ class LinkCredentials {
 
 /// Authentication service for handling authorised access to the application
 /// Allows authorisation via email/pass, Facebook and Google as identity providers
-class AuthService<T> {
+class FirebaseAuthService implements AuthService {
   // generate instance of firebase authentication
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   // 3rd party authentication module instances
   // final fb = FacebookLogin();
-  final FacebookLogin facebookLogin = FacebookLogin();
+  final FacebookLogin _facebookLogin = FacebookLogin();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // create new stream that checks for authorisation state changes AND fetches
-  // additional user data
-  StreamController<T> _authStream = StreamController<T>();
+  // create new stream that checks for authorisation state changes
+  StreamController<User> _authStream = StreamController<User>();
 
-  // user model builders
-  T Function(User firebaseUser, Map<String, dynamic> userProfile) userBuilder;
-
-  AuthService({
-    @required this.userBuilder,
-  }) {
+  FirebaseAuthService() {
     // listen to the on auth state changed stream
     _firebaseAuth.authStateChanges().listen(
       (User user) async {
-        if (user == null) {
-          // user not authorised, return null to ensure application blocks user access
-          _authStream.add(null);
-        } else {
-          // user authorised. fetch additional data from server
-          String uid = user.uid;
-          // get firestore document path
-          final path = 'users/$uid';
-          // create a connection to the document in firestore
-          final reference = FirebaseFirestore.instance.doc(path);
-          // async fetch document from firestore
-          DocumentSnapshot userData = await reference.get();
-          // add firebase user appended with user profile information to stream
-          _authStream.add(
-            userBuilder(
-              user,
-              userData.data(),
-            ),
-          );
-        }
+        _authStream.add(user);
       },
     );
   }
 
-  // master stream that the parent provider of the application is listening too.
-  // application will be rebuilt when updates from firebase are issued through this
-  // stream.
+  // master stream that the parent provider of the application is listening to.
+  // application will be rebuilt when updates from firebase are issued through
+  // this stream.
   // getter - defined using the get keyword - allows retrieval of a value from a class
-  Stream<T> get onAuthStateChanged {
+  Stream<User> get onAuthStateChanged {
     return _authStream.stream;
   }
 
@@ -312,13 +287,13 @@ class AuthService<T> {
     User user;
 
     // Force the users to login using the login dialog based on WebViews.
-    facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
+    _facebookLogin.loginBehavior = FacebookLoginBehavior.webViewOnly;
 
     // log user out of existing facebook account
-    facebookLogin.logOut();
+    _facebookLogin.logOut();
 
     // commence the facebook authorisation using the OAuth standard
-    final result = await facebookLogin.logIn(['email']);
+    final result = await _facebookLogin.logIn(['email']);
 
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
@@ -453,8 +428,6 @@ class AuthService<T> {
   Future<void> signOut() async {
     // if auth service is down force user object to be null
     _authStream.add(null);
-    // await _googleSignIn.signOut();
-    // await facebookLogin.logOut();
     return _firebaseAuth.signOut();
   }
 

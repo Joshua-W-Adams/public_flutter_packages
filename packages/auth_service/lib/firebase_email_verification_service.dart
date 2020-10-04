@@ -1,6 +1,6 @@
-part of firebase_auth_service;
+part of auth_service;
 
-class EmailVerificationService {
+class FirebaseEmailVerificationService {
   final bool emailVerificationCheckRequired;
   User firebaseUser;
   bool _isEmailVerified;
@@ -10,7 +10,7 @@ class EmailVerificationService {
   final StreamController<bool> _emailVerificationStream =
       StreamController<bool>();
 
-  EmailVerificationService({
+  FirebaseEmailVerificationService({
     @required this.firebaseUser,
     @required this.emailVerificationCheckRequired,
   }) {

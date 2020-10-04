@@ -1,4 +1,4 @@
-name: firebase_auth_service
+name: auth_service
 description: A new Flutter package project.
 version: 0.0.1
 author:
@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   http:
-  cloud_firestore:
   firebase_auth:
   google_sign_in: ^4.1.0
   flutter_facebook_login: ^3.0.0
