@@ -27,7 +27,7 @@ typedef AddRemoveFileFunction = void Function(
 
 typedef FilePickerFunction = Future<File> Function();
 
-class ListFilePicker extends StatefulWidget {
+class MultiFilePicker extends StatefulWidget {
   final List<FileUploadModel> fileModels;
   final int initialTileCount;
   final int maxTileCount;
@@ -41,7 +41,7 @@ class ListFilePicker extends StatefulWidget {
   final String displayType;
   final String selectFileText;
 
-  ListFilePicker({
+  MultiFilePicker({
     this.fileModels,
     this.initialTileCount = 3,
     this.maxTileCount = 9,
@@ -57,10 +57,10 @@ class ListFilePicker extends StatefulWidget {
   });
 
   @override
-  _ListFilePickerState createState() => _ListFilePickerState();
+  _MultiFilePickerState createState() => _MultiFilePickerState();
 }
 
-class _ListFilePickerState extends State<ListFilePicker> {
+class _MultiFilePickerState extends State<MultiFilePicker> {
   // Store array of files (img or video) to be displayed in the list tiles.
   List<Object> _files = [];
 
