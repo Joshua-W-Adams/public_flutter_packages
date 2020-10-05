@@ -455,4 +455,57 @@ class FirebaseAuthService implements AuthService {
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
   }
+
+  // ********************************** Email Verfication Methods *******************
+
+  // private variables for handling email verification timer checks
+  Timer _timer;
+  Timer _timeout;
+  User _firebaseUser;
+
+  void addToAuthStream() {
+    // refire the stream with the last firebase user profile recieved
+    _authStream.add(_firebaseUser);
+  }
+
+  // initialise timer to check for verification status every 2 seconds
+  void checkForEmailVerificationStatus() {
+    _timer = Timer.periodic(
+      Duration(seconds: 2),
+      (timer) async {
+        // reload current user data
+        _firebaseUser = await FirebaseAuth.instance.currentUser;
+        // if user email is verified cancel timer
+        if (_firebaseUser.emailVerified) {
+          // fire user management stream with updated firebase user object
+          addToAuthStream();
+          disposeTimers();
+        }
+      },
+    );
+    _timeout = Timer.periodic(Duration(minutes: 10), (timer) {
+      // cancel all timers if user has been afk for 10 minutes or longer
+      _timer.cancel();
+      _timeout.cancel();
+    });
+  }
+
+  Future<void> sendVerificationEmail() async {
+    // restart timers if timed out
+    if (_timer == null && _timeout == null) {
+      checkForEmailVerificationStatus();
+    }
+    // send verification email from firebase.
+    await _firebaseUser.sendEmailVerification();
+  }
+
+  // kill timers when no longer required to prevent memory leaks
+  void disposeTimers() {
+    if (_timer != null) {
+      _timer.cancel();
+    }
+    if (_timeout != null) {
+      _timeout.cancel();
+    }
+  }
 }
