@@ -16,7 +16,7 @@ import 'package:general_widgets/general_widgets.dart';
 /// variables within to have access to the passed type.
 class AuthWidget<T> extends StatelessWidget {
   final Stream<T> authStream;
-  final Widget Function(BuildContext) nonSignedInBuilder;
+  final Widget Function(BuildContext, AsyncSnapshot<T>) nonSignedInBuilder;
   // callback function to conduct additional verification checks. For example
   // email verification or 2FA.
   final bool Function(BuildContext, AsyncSnapshot<T>) additionalAuthChecks;
@@ -55,7 +55,7 @@ class AuthWidget<T> extends StatelessWidget {
             }
             return additionalAuthChecksFailedBuilder(context, snapshot);
           }
-          return nonSignedInBuilder(context);
+          return nonSignedInBuilder(context, snapshot);
         }
         // pending authentication connection screen in case of errors with auth
         // service availability
