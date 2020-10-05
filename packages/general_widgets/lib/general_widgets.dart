@@ -8,3 +8,4 @@ part 'page_app_bar.dart';
 part 'custom_raised_button.dart';
 part 'stack_button.dart';
 part 'awaiting.dart';
+part 'avatar.dart';
