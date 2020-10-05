@@ -21,6 +21,11 @@ class AuthWidget<T> extends StatelessWidget {
   final List<SingleChildWidget> Function(BuildContext, AsyncSnapshot<T>)
       multiProviderBuilder;
   final Widget Function(BuildContext) nonSignedInBuilder;
+  // callback function to conduct additional verification checks. For example
+  // email verification or 2FA.
+  final bool Function(BuildContext, AsyncSnapshot<T>) additionalAuthChecks;
+  final Widget Function(BuildContext, AsyncSnapshot<T>)
+      additionalAuthChecksFailedBuilder;
   final Widget Function(BuildContext, AsyncSnapshot<T>) signedInBuilder;
   final Function authServiceDownFunction;
 
@@ -28,8 +33,10 @@ class AuthWidget<T> extends StatelessWidget {
     Key key,
     @required this.authStream,
     this.multiProviderBuilder,
-    @required this.signedInBuilder,
     @required this.nonSignedInBuilder,
+    @required this.additionalAuthChecks,
+    @required this.additionalAuthChecksFailedBuilder,
+    @required this.signedInBuilder,
     @required this.authServiceDownFunction,
   }) : super(key: key);
 
@@ -44,13 +51,20 @@ class AuthWidget<T> extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           // user has been authentication onto the system with authentication service
           if (snapshot.hasData == true) {
-            if (multiProviderBuilder is Function) {
-              return MultiProvider(
-                providers: multiProviderBuilder(context, snapshot),
-                child: signedInBuilder(context, snapshot),
-              );
+            // conduct additional authentication checks
+            bool verified = additionalAuthChecks is Function
+                ? additionalAuthChecks(context, snapshot)
+                : true;
+            if (verified) {
+              if (multiProviderBuilder is Function) {
+                return MultiProvider(
+                  providers: multiProviderBuilder(context, snapshot),
+                  child: signedInBuilder(context, snapshot),
+                );
+              }
+              return signedInBuilder(context, snapshot);
             }
-            return signedInBuilder(context, snapshot);
+            return additionalAuthChecksFailedBuilder(context, snapshot);
           }
           return nonSignedInBuilder(context);
         }
