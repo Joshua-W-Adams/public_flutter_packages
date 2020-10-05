@@ -474,7 +474,9 @@ class FirebaseAuthService implements AuthService {
       Duration(seconds: 2),
       (timer) async {
         // reload current user data
-        _firebaseUser = await FirebaseAuth.instance.currentUser;
+        await _firebaseAuth.currentUser
+          ..reload();
+        _firebaseUser = _firebaseAuth.currentUser;
         // if user email is verified cancel timer
         if (_firebaseUser.emailVerified) {
           // fire user management stream with updated firebase user object
