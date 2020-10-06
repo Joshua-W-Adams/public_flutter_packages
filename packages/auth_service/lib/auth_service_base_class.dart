@@ -10,7 +10,7 @@ abstract class AuthService {
     String password,
   );
   Future<void> signInWithGoogle();
-  Future<void> signInWithFacebook();
+  // Future<void> signInWithFacebook();
   Future<void> signInWithApple();
   Future<void> signOut();
   // user creation methods

@@ -11,10 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http:
+  # http:
   firebase_auth:
   google_sign_in: ^4.1.0
-  flutter_facebook_login: ^3.0.0
+  # support for flutter_facebook_login dropped as it causes conflicts with the 
+  # flutter image_picker library.
+  # flutter_facebook_login: ^3.0.0
   sign_in_with_apple: ^2.5.2
   # old facebook sign in web support library
   # https://stackoverflow.com/questions/62471919/flutter-facebook-login-in-web
