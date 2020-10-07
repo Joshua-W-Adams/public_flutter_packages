@@ -105,7 +105,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
         enabled: !model.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.grey[200],
+            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
             width: 2.0,
           ),
         ),
@@ -130,7 +130,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
         enabled: !model.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Colors.grey[200],
+            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
             width: 2.0,
           ),
         ),
@@ -160,7 +160,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
           loading: model.isLoading,
           onPressed: model.isLoading ? null : _submit,
           color: Theme.of(context).primaryColor,
-          textColor: Colors.white,
+          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
         ),
         SizedBox(height: 16.0),
         FlatButton(

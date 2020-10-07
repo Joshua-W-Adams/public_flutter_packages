@@ -24,15 +24,11 @@ class CustomRaisedButton extends StatelessWidget {
   }) : super(key: key);
 
   Widget buildSpinner(BuildContext context) {
-    final ThemeData data = Theme.of(context);
-    return Theme(
-      data: data.copyWith(accentColor: Colors.white70),
-      child: SizedBox(
-        width: 28,
-        height: 28,
-        child: CircularProgressIndicator(
-          strokeWidth: 3.0,
-        ),
+    return SizedBox(
+      width: 28,
+      height: 28,
+      child: CircularProgressIndicator(
+        strokeWidth: 3.0,
       ),
     );
   }
@@ -48,10 +44,10 @@ class CustomRaisedButton extends StatelessWidget {
             Radius.circular(borderRadius),
           ),
           side: BorderSide(
-            color: Colors.grey[300],
+            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
           ),
         ),
-        color: color ?? Colors.transparent,
+        color: color,
         elevation: 0,
         disabledColor: disabledColor,
         textColor: textColor,

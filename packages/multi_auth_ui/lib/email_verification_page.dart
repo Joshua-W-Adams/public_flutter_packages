@@ -84,7 +84,8 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           child: Icon(
             Icons.email,
           ),
-          disabledColor: Colors.grey[100],
+          disabledColor:
+              Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
           onPressed: _emailRequestPending ? null : sendVerificationEmail,
         ),
       ),

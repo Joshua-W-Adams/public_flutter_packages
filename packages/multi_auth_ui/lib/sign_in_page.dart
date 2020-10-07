@@ -73,17 +73,17 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  TextStyle _getFooterTextStyle() {
+  TextStyle _getFooterTextStyle(BuildContext context) {
     return TextStyle(
-      color: Colors.grey[600],
+      color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
     );
   }
 
-  TextStyle _getFooterClickableTextStyle() {
+  TextStyle _getFooterClickableTextStyle(BuildContext context) {
     return TextStyle(
       fontWeight: FontWeight.bold,
       decoration: TextDecoration.underline,
-      color: Colors.grey[600],
+      color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
     );
   }
 
@@ -97,11 +97,11 @@ class SignInPage extends StatelessWidget {
           textAlign: TextAlign.center,
           text: TextSpan(
             text: 'By signing up, you confirm that you agree to our ',
-            style: _getFooterTextStyle(),
+            style: _getFooterTextStyle(context),
             children: <TextSpan>[
               TextSpan(
                 text: 'Terms of Use',
-                style: _getFooterClickableTextStyle(),
+                style: _getFooterClickableTextStyle(context),
                 // https://fluttermaster.com/method-chaining-using-cascade-in-dart/
                 // below "chains" the two methods together
                 recognizer: TapGestureRecognizer()
@@ -113,11 +113,11 @@ class SignInPage extends StatelessWidget {
               ),
               TextSpan(
                 text: ' and have read and understood our ',
-                style: _getFooterTextStyle(),
+                style: _getFooterTextStyle(context),
               ),
               TextSpan(
                 text: 'Privacy Policy',
-                style: _getFooterClickableTextStyle(),
+                style: _getFooterClickableTextStyle(context),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     if (privacyPolicyCallback != null) {
@@ -127,7 +127,7 @@ class SignInPage extends StatelessWidget {
               ),
               TextSpan(
                 text: '.',
-                style: _getFooterTextStyle(),
+                style: _getFooterTextStyle(context),
               ),
             ],
           ),
@@ -140,7 +140,6 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,

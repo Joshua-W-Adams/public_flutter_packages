@@ -81,7 +81,7 @@ class _AuthOptionsState extends State<AuthOptions> {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: Colors.grey[600],
+          color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
         ),
       ),
     );
@@ -102,7 +102,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Icon(
         Icons.person,
       ),
-      disabledColor: Colors.grey[100],
+      disabledColor:
+          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
       // Assigning a null value to the onpressed event disables the button
       onPressed: _isLoading
           ? null
@@ -125,7 +126,8 @@ class _AuthOptionsState extends State<AuthOptions> {
         child:
             Image.asset('assets/img/google_icon.png', package: 'multi_auth_ui'),
       ),
-      disabledColor: Colors.grey[100],
+      disabledColor:
+          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
       onPressed: _isLoading
           ? null
           : () async {
@@ -149,7 +151,8 @@ class _AuthOptionsState extends State<AuthOptions> {
         child:
             Image.asset('assets/img/apple_icon.png', package: 'multi_auth_ui'),
       ),
-      disabledColor: Colors.grey[100],
+      disabledColor:
+          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
       onPressed: _isLoading
           ? null
           : () async {
@@ -173,7 +176,8 @@ class _AuthOptionsState extends State<AuthOptions> {
         child: Image.asset('assets/img/facebook_icon.png',
             package: 'multi_auth_ui'),
       ),
-      disabledColor: Colors.grey[100],
+      disabledColor:
+          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
       onPressed: _isLoading
           ? null
           : () async {
@@ -194,7 +198,8 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Icon(
         Icons.alternate_email,
       ),
-      disabledColor: Colors.grey[100],
+      disabledColor:
+          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
       onPressed: _isLoading
           ? null
           : () async {
@@ -219,7 +224,11 @@ class _AuthOptionsState extends State<AuthOptions> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.grey[400],
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .color
+                        .withOpacity(0.5),
                   ),
                 ),
               ),
@@ -231,7 +240,11 @@ class _AuthOptionsState extends State<AuthOptions> {
               'Or',
               style: TextStyle(
                 fontSize: 14.0,
-                color: Colors.grey[600],
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    .color
+                    .withOpacity(0.5),
               ),
               textAlign: TextAlign.center,
             ),
@@ -241,7 +254,11 @@ class _AuthOptionsState extends State<AuthOptions> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.grey[400],
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodyText1
+                        .color
+                        .withOpacity(0.5),
                   ),
                 ),
               ),

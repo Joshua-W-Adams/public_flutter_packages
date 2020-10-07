@@ -5,7 +5,7 @@ class StackButton extends CustomRaisedButton {
     Key key,
     @required String text,
     @required VoidCallback onPressed,
-    Color textColor = Colors.black87,
+    Color textColor,
     Color disabledColor,
     double height = 50.0,
     Widget child,

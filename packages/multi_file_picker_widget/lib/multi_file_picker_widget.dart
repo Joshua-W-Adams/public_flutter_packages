@@ -270,7 +270,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     Text(
                       widget.selectFileText,
                       style: TextStyle(
-                        color: Colors.black54,
+                        color: Theme.of(context).textTheme.bodyText1.color,
                       ),
                     ),
                   ],
