@@ -102,8 +102,7 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Icon(
         Icons.person,
       ),
-      disabledColor:
-          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+      disabledColor: Theme.of(context).canvasColor,
       // Assigning a null value to the onpressed event disables the button
       onPressed: _isLoading
           ? null
@@ -126,8 +125,7 @@ class _AuthOptionsState extends State<AuthOptions> {
         child:
             Image.asset('assets/img/google_icon.png', package: 'multi_auth_ui'),
       ),
-      disabledColor:
-          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+      disabledColor: Theme.of(context).canvasColor,
       onPressed: _isLoading
           ? null
           : () async {
@@ -151,8 +149,7 @@ class _AuthOptionsState extends State<AuthOptions> {
         child:
             Image.asset('assets/img/apple_icon.png', package: 'multi_auth_ui'),
       ),
-      disabledColor:
-          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+      disabledColor: Theme.of(context).canvasColor,
       onPressed: _isLoading
           ? null
           : () async {
@@ -176,8 +173,7 @@ class _AuthOptionsState extends State<AuthOptions> {
         child: Image.asset('assets/img/facebook_icon.png',
             package: 'multi_auth_ui'),
       ),
-      disabledColor:
-          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+      disabledColor: Theme.of(context).canvasColor,
       onPressed: _isLoading
           ? null
           : () async {
@@ -198,8 +194,7 @@ class _AuthOptionsState extends State<AuthOptions> {
       child: Icon(
         Icons.alternate_email,
       ),
-      disabledColor:
-          Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+      disabledColor: Theme.of(context).canvasColor,
       onPressed: _isLoading
           ? null
           : () async {

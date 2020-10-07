@@ -159,6 +159,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
           child: Text(model.primaryButtonText),
           loading: model.isLoading,
           onPressed: model.isLoading ? null : _submit,
+          disabledColor: Theme.of(context).canvasColor,
           color: Theme.of(context).primaryColor,
           textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
         ),
