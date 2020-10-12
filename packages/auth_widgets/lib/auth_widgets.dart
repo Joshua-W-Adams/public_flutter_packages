@@ -44,8 +44,12 @@ class AuthWidget<T> extends StatelessWidget {
         // authentication stream has been initialised to prevent unnecessary
         // widget builds
         if (snapshot.connectionState == ConnectionState.active) {
-          // user has been authentication onto the system with authentication service
-          if (snapshot.hasData == true) {
+          if (snapshot.hasError) {
+            return ShowError(
+              error: snapshot.error.toString(),
+            );
+          } else if (snapshot.hasData == true) {
+            // user has been authentication onto the system with authentication service
             // conduct additional authentication checks
             bool verified = additionalAuthChecks is Function
                 ? additionalAuthChecks(context, snapshot)
