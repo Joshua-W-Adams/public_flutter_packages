@@ -8,7 +8,7 @@ class ShowError extends StatelessWidget {
 
   ShowError({
     @required this.error,
-    this.footerText = 'Go To Login Page',
+    this.footerText,
     this.footerTextOnTap,
   });
 
@@ -16,43 +16,46 @@ class ShowError extends StatelessWidget {
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
-      child: Center(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Error: $error',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.black54,
+      child: FittedBox(
+        child: Center(
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
                 ),
-                // overflow: TextOverflow.ellipsis,
-              ),
-              footerText != null ? SizedBox(height: 10) : Container(),
-              RichText(
-                text: TextSpan(
-                  text: footerText ?? '',
+                SizedBox(height: 10),
+                Text(
+                  'Error: $error',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[600],
+                    fontSize: 15,
+                    color: Colors.black54,
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      if (footerTextOnTap != null) {
-                        footerTextOnTap();
-                      }
-                    },
                 ),
-              ),
-            ],
+                footerText != null ? SizedBox(height: 10) : Container(),
+                footerText != null
+                    ? RichText(
+                        text: TextSpan(
+                          text: footerText,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[600],
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              if (footerTextOnTap != null) {
+                                footerTextOnTap();
+                              }
+                            },
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
         ),
       ),
