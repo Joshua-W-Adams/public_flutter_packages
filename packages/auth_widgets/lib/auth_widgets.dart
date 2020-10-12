@@ -47,6 +47,8 @@ class AuthWidget<T> extends StatelessWidget {
           if (snapshot.hasError) {
             return ShowError(
               error: snapshot.error.toString(),
+              footerText: 'Return to Login Page',
+              footerTextOnTap: authServiceDownFunction,
             );
           } else if (snapshot.hasData == true) {
             // user has been authentication onto the system with authentication service
