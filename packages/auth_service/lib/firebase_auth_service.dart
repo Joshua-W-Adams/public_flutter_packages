@@ -481,7 +481,8 @@ class FirebaseAuthService implements AuthService {
         if (_firebaseUser.emailVerified) {
           // refresh id token to ensure updated email verified status is sent
           // with all requests.
-          await _firebaseAuth.currentUser.getIdToken(true);
+          // force refresh of token claim
+          // await _firebaseAuth.currentUser.getIdToken(true);
           // fire user management stream with updated firebase user object
           addToAuthStream();
           disposeTimers();
