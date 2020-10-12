@@ -471,7 +471,7 @@ class FirebaseAuthService implements AuthService {
   // initialise timer to check for verification status every 2 seconds
   void checkForEmailVerificationStatus() {
     _timer = Timer.periodic(
-      Duration(seconds: 2),
+      Duration(seconds: 1),
       (timer) async {
         // reload current user data
         await _firebaseAuth.currentUser
@@ -479,6 +479,9 @@ class FirebaseAuthService implements AuthService {
         _firebaseUser = _firebaseAuth.currentUser;
         // if user email is verified cancel timer
         if (_firebaseUser.emailVerified) {
+          // refresh id token to ensure updated email verified status is sent
+          // with all requests.
+          await _firebaseAuth.currentUser.getIdToken(true);
           // fire user management stream with updated firebase user object
           addToAuthStream();
           disposeTimers();
