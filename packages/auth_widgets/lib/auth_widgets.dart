@@ -24,6 +24,7 @@ class AuthWidget<T> extends StatelessWidget {
       additionalAuthChecksFailedBuilder;
   final Widget Function(BuildContext, AsyncSnapshot<T>) signedInBuilder;
   final Function authServiceDownFunction;
+  final Widget Function(Widget child, AsyncSnapshot<T>) parentBuilder;
 
   const AuthWidget({
     Key key,
@@ -33,10 +34,12 @@ class AuthWidget<T> extends StatelessWidget {
     @required this.additionalAuthChecksFailedBuilder,
     @required this.signedInBuilder,
     @required this.authServiceDownFunction,
+    this.parentBuilder,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Widget child;
     return StreamBuilder<T>(
       stream: authStream,
       builder: (context, snapshot) {
@@ -45,7 +48,7 @@ class AuthWidget<T> extends StatelessWidget {
         // widget builds
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasError) {
-            return ShowError(
+            child = ShowError(
               error: snapshot.error.toString(),
               footerText: 'Return to Login Page',
               footerTextOnTap: authServiceDownFunction,
@@ -57,18 +60,28 @@ class AuthWidget<T> extends StatelessWidget {
                 ? additionalAuthChecks(context, snapshot)
                 : true;
             if (verified) {
-              return signedInBuilder(context, snapshot);
+              child = signedInBuilder(context, snapshot);
+            } else {
+              child = additionalAuthChecksFailedBuilder(context, snapshot);
             }
-            return additionalAuthChecksFailedBuilder(context, snapshot);
+          } else {
+            child = nonSignedInBuilder(context, snapshot);
           }
-          return nonSignedInBuilder(context, snapshot);
+        } else {
+          // pending authentication connection screen in case of errors with auth
+          // service availability
+          child = Awaiting(
+            headerText: 'Awaiting user authentication...',
+            footerTextOnTap: authServiceDownFunction,
+          );
         }
-        // pending authentication connection screen in case of errors with auth
-        // service availability
-        return Awaiting(
-          headerText: 'Awaiting user authentication...',
-          footerTextOnTap: authServiceDownFunction,
-        );
+        if (parentBuilder is Function) {
+          // case 1 - injecting widget above all authentication checking widgets
+          return parentBuilder(child, snapshot);
+        } else {
+          // case 2 - otherwise
+          return child;
+        }
       },
     );
   }
