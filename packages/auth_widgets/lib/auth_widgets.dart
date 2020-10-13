@@ -24,7 +24,8 @@ class AuthWidget<T> extends StatelessWidget {
       additionalAuthChecksFailedBuilder;
   final Widget Function(BuildContext, AsyncSnapshot<T>) signedInBuilder;
   final Function authServiceDownFunction;
-  final Widget Function(Widget child, AsyncSnapshot<T>) parentBuilder;
+  final Widget Function(Widget child, AsyncSnapshot<T>, bool signedIn)
+      parentBuilder;
 
   const AuthWidget({
     Key key,
@@ -43,6 +44,7 @@ class AuthWidget<T> extends StatelessWidget {
     return StreamBuilder<T>(
       stream: authStream,
       builder: (context, snapshot) {
+        bool signedIn = false;
         // only attempt to load signed in or non sign in widgets after the
         // authentication stream has been initialised to prevent unnecessary
         // widget builds
@@ -60,6 +62,7 @@ class AuthWidget<T> extends StatelessWidget {
                 ? additionalAuthChecks(context, snapshot)
                 : true;
             if (verified) {
+              signedIn = true;
               child = signedInBuilder(context, snapshot);
             } else {
               child = additionalAuthChecksFailedBuilder(context, snapshot);
@@ -77,7 +80,7 @@ class AuthWidget<T> extends StatelessWidget {
         }
         if (parentBuilder is Function) {
           // case 1 - injecting widget above all authentication checking widgets
-          return parentBuilder(child, snapshot);
+          return parentBuilder(child, snapshot, signedIn);
         } else {
           // case 2 - otherwise
           return child;
