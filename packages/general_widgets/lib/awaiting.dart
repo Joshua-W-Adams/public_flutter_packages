@@ -16,53 +16,58 @@ class Awaiting extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 32.0,
-                bottom: 32.0,
-              ),
-              child: Text(
-                headerText ?? '',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue[600],
-                ),
-              ),
-            ),
-            CircularProgressIndicator(),
-            // if for some reason the auth service is down and a user object
-            // is not returned. Allow user to return to the login page and
-            // try again.
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
                 padding: const EdgeInsets.only(
                   top: 32.0,
                   bottom: 32.0,
                 ),
                 child: RichText(
                   text: TextSpan(
-                    text: footerText ?? '',
+                    text: headerText ?? '',
                     style: TextStyle(
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.blue[600],
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        if (footerTextOnTap != null) {
-                          footerTextOnTap();
-                        }
-                      },
                   ),
                 ),
               ),
-            )
-          ],
+              CircularProgressIndicator(),
+              // if for some reason the auth service is down and a user object
+              // is not returned. Allow user to return to the login page and
+              // try again.
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 32.0,
+                    bottom: 32.0,
+                  ),
+                  child: RichText(
+                    text: TextSpan(
+                      text: footerText ?? '',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[600],
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          if (footerTextOnTap != null) {
+                            footerTextOnTap();
+                          }
+                        },
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

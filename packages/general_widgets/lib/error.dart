@@ -29,11 +29,13 @@ class ShowError extends StatelessWidget {
                   color: Colors.red,
                 ),
                 SizedBox(height: 10),
-                Text(
-                  'Error: $error',
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black54,
+                RichText(
+                  text: TextSpan(
+                    text: 'Error: $error',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
                 footerText != null ? SizedBox(height: 10) : Container(),
