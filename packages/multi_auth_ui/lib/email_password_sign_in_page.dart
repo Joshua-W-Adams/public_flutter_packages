@@ -3,11 +3,15 @@ part of multi_auth_ui;
 class EmailPasswordSignInPageBuilder extends StatelessWidget {
   final VoidCallback onSignedIn;
   final EmailPasswordSignInModel model;
+  final String initialEmail;
+  final String initialPassword;
 
   const EmailPasswordSignInPageBuilder({
     Key key,
     this.onSignedIn,
     @required this.model,
+    this.initialEmail,
+    this.initialPassword,
   }) : super(key: key);
 
   @override
@@ -21,6 +25,8 @@ class EmailPasswordSignInPageBuilder extends StatelessWidget {
           return EmailPasswordSignInPage(
             model: model,
             onSignedIn: onSignedIn,
+            initialEmail: initialEmail,
+            initialPassword: initialPassword,
           );
         },
       ),
@@ -31,11 +37,15 @@ class EmailPasswordSignInPageBuilder extends StatelessWidget {
 class EmailPasswordSignInPage extends StatefulWidget {
   final EmailPasswordSignInModel model;
   final VoidCallback onSignedIn;
+  final String initialEmail;
+  final String initialPassword;
 
   const EmailPasswordSignInPage({
     Key key,
     @required this.model,
     this.onSignedIn,
+    this.initialEmail,
+    this.initialPassword,
   }) : super(key: key);
 
   @override
@@ -49,6 +59,18 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
 
   EmailPasswordSignInModel get model {
     return widget.model;
+  }
+
+  @override
+  void initState() {
+    // set default values of email and password if provided
+    if (widget.initialEmail != null) {
+      _emailController.text = widget.initialEmail;
+    }
+    if (widget.initialPassword != null) {
+      _passwordController.text = widget.initialPassword;
+    }
+    super.initState();
   }
 
   @override
