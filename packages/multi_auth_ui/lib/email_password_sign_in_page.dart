@@ -66,9 +66,11 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     // set default values of email and password if provided
     if (widget.initialEmail != null) {
       _emailController.text = widget.initialEmail;
+      widget.model.email = widget.initialEmail;
     }
     if (widget.initialPassword != null) {
       _passwordController.text = widget.initialPassword;
+      widget.model.password = widget.initialPassword;
     }
     super.initState();
   }
