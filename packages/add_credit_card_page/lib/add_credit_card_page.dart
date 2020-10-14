@@ -3,7 +3,6 @@ library add_credit_card_page;
 import 'package:flutter/material.dart';
 import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:general_widgets/general_widgets.dart';
-import 'package:stripe_sdk/stripe_sdk.dart';
 import 'package:stripe_sdk/stripe_sdk_ui.dart';
 
 class AddCreditCardPage extends StatefulWidget {
