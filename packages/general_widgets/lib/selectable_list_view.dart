@@ -28,6 +28,16 @@ class _SelectableListViewState extends State<SelectableListView> {
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(SelectableListView oldWidget) {
+    setState(() {
+      _list = widget.list;
+      _multipleSelection = widget.multipleSelection;
+      _onSelectedCallback = widget.onSelectedCallback;
+    });
+    super.didUpdateWidget(oldWidget);
+  }
+
   void setSelectedValue(int index) {
     if (!_multipleSelection) {
       // case 1 - single selectable items
