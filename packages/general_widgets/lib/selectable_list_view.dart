@@ -68,30 +68,28 @@ class _SelectableListViewState extends State<SelectableListView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: List.generate(
-        _list.length,
-        (index) {
-          bool _selected = getSelectionStatus(index);
-          return ListTile(
-            onTap: () {
-              setState(() {
-                setSelectedValue(index);
-                if (_onSelectedCallback is Function) {
-                  _onSelectedCallback(_list);
-                }
-              });
-            },
-            selected: _selected,
-            leading: _getLeading(index),
-            title: Text('${_list[index].title}'),
-            subtitle: Text('${_list[index].subtitle}'),
-            trailing: _selected
-                ? Icon(Icons.check_box)
-                : Icon(Icons.check_box_outline_blank),
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: _list.length,
+      itemBuilder: (context, index) {
+        bool _selected = getSelectionStatus(index);
+        return ListTile(
+          onTap: () {
+            setState(() {
+              setSelectedValue(index);
+              if (_onSelectedCallback is Function) {
+                _onSelectedCallback(_list);
+              }
+            });
+          },
+          selected: _selected,
+          leading: _getLeading(index),
+          title: Text('${_list[index].title}'),
+          subtitle: Text('${_list[index].subtitle}'),
+          trailing: _selected
+              ? Icon(Icons.check_box)
+              : Icon(Icons.check_box_outline_blank),
+        );
+      },
     );
   }
 }
