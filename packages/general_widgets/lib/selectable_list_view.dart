@@ -6,10 +6,11 @@ class SelectableListView extends StatefulWidget {
   final Function(List<SelectableListItem> items) onSelectedCallback;
 
   SelectableListView({
+    Key key,
     @required this.list,
     this.multipleSelection = false,
     this.onSelectedCallback,
-  });
+  }) : super(key: key);
   @override
   _SelectableListViewState createState() => _SelectableListViewState();
 }
