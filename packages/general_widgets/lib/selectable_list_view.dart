@@ -97,15 +97,19 @@ class _SelectableListViewState extends State<SelectableListView> {
 }
 
 class SelectableListItem {
+  final String id;
   final String title;
   final String subtitle;
   final Widget leading;
+  final dynamic extraData;
   bool selected;
 
   SelectableListItem({
+    this.id = '',
     this.title = '',
     this.subtitle = '',
     this.leading,
+    this.extraData,
     this.selected = false,
   });
 }
