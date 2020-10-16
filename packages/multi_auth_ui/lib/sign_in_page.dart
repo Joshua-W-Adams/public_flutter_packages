@@ -12,6 +12,7 @@ class SignInPage extends StatelessWidget {
   final String appTextFilePath;
   final double appTextHeight;
   final Function() termsOfUseCallback;
+  final Function() billingTermsCallback;
   final Function() privacyPolicyCallback;
   final List<String> authProviders;
   final Future Function() signInAnonymously;
@@ -30,6 +31,7 @@ class SignInPage extends StatelessWidget {
     @required this.appTextFilePath,
     this.appTextHeight = 12,
     @required this.termsOfUseCallback,
+    @required this.billingTermsCallback,
     @required this.privacyPolicyCallback,
     @required this.authProviders,
     this.signInAnonymously,
@@ -73,69 +75,6 @@ class SignInPage extends StatelessWidget {
     );
   }
 
-  TextStyle _getFooterTextStyle(BuildContext context) {
-    return TextStyle(
-      color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
-    );
-  }
-
-  TextStyle _getFooterClickableTextStyle(BuildContext context) {
-    return TextStyle(
-      fontWeight: FontWeight.bold,
-      decoration: TextDecoration.underline,
-      color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
-    );
-  }
-
-  Widget _buildFooter(BuildContext context) {
-    return Container(
-      height: 75,
-      padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: 'By signing up, you confirm that you agree to our ',
-            style: _getFooterTextStyle(context),
-            children: <TextSpan>[
-              TextSpan(
-                text: 'Terms of Use',
-                style: _getFooterClickableTextStyle(context),
-                // https://fluttermaster.com/method-chaining-using-cascade-in-dart/
-                // below "chains" the two methods together
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    if (termsOfUseCallback != null) {
-                      termsOfUseCallback();
-                    }
-                  },
-              ),
-              TextSpan(
-                text: ' and have read and understood our ',
-                style: _getFooterTextStyle(context),
-              ),
-              TextSpan(
-                text: 'Privacy Policy',
-                style: _getFooterClickableTextStyle(context),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = () {
-                    if (privacyPolicyCallback != null) {
-                      privacyPolicyCallback();
-                    }
-                  },
-              ),
-              TextSpan(
-                text: '.',
-                style: _getFooterTextStyle(context),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,7 +96,11 @@ class SignInPage extends StatelessWidget {
               linkCredentialsErrorMessage: linkCredentialsErrorMessage,
               linkCredentialsCallback: linkCredentialsCallback,
             ),
-            _buildFooter(context),
+            TermsAndConditions(
+              termsOfUseCallback: termsOfUseCallback,
+              billingTermsCallback: billingTermsCallback,
+              privacyPolicyCallback: privacyPolicyCallback,
+            ),
           ],
         ),
       ),
