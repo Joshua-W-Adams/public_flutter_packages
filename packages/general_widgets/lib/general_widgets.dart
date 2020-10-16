@@ -1,5 +1,6 @@
 library general_widgets;
 
+import 'package:alert_dialogs/alert_dialogs.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -10,3 +11,4 @@ part 'stack_button.dart';
 part 'awaiting.dart';
 part 'avatar.dart';
 part 'selectable_list_view.dart';
+part 'crud_list.dart';
