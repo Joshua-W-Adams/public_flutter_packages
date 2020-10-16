@@ -12,3 +12,4 @@ part 'awaiting.dart';
 part 'avatar.dart';
 part 'selectable_list_view.dart';
 part 'crud_list.dart';
+part 'terms_and_conditions.dart';
