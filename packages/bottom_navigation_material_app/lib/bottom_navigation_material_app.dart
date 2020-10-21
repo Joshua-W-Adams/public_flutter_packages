@@ -9,12 +9,20 @@ import 'package:flutter/material.dart';
 /// 3. Navigators all persist state
 class BottomNavigationMaterialApp extends StatefulWidget {
   final List<NavigationTabModel> navigationTabs;
+
   // route generator used to build all material page routes
   final Route<dynamic> Function(RouteSettings settings) generateRouteFunction;
+
+  final ThemeData theme;
+
+  final Widget Function(NavigationTabModel tab, Navigator tabNavigator)
+      navigatorBuilder;
 
   BottomNavigationMaterialApp({
     @required this.navigationTabs,
     @required this.generateRouteFunction,
+    this.theme,
+    this.navigatorBuilder,
   });
 
   @override
@@ -49,15 +57,18 @@ class _BottomNavigationMaterialAppState
   /// indexed stack.
   List<Widget> _getPersistantStack() {
     return widget.navigationTabs.map((tab) {
+      Navigator tabNavigator = Navigator(
+        key: tab.navigatorKey,
+        initialRoute: tab.url,
+        onGenerateRoute: widget.generateRouteFunction,
+      );
       return WillPopScope(
         onWillPop: () async {
           return !await tab.navigatorKey.currentState.maybePop();
         },
-        child: Navigator(
-          key: tab.navigatorKey,
-          initialRoute: tab.url,
-          onGenerateRoute: widget.generateRouteFunction,
-        ),
+        child: widget.navigatorBuilder != null
+            ? widget.navigatorBuilder(tab, tabNavigator)
+            : tabNavigator,
       );
     }).toList();
   }
@@ -71,6 +82,7 @@ class _BottomNavigationMaterialAppState
     /// nested navigators and hyperlinking from web browsers to specific pages
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: widget.theme,
       home: Scaffold(
         body: SafeArea(
           child: IndexedStack(

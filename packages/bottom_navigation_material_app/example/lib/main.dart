@@ -36,6 +36,10 @@ class MyApp extends StatelessWidget {
     return BottomNavigationMaterialApp(
       navigationTabs: navigationTabs,
       generateRouteFunction: routeGenerator.generateRoute,
+      theme: ThemeData.dark(),
+      navigatorBuilder: (_, tabNavigator) {
+        return tabNavigator;
+      },
     );
   }
 }
