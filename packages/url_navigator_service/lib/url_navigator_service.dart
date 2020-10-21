@@ -3,7 +3,11 @@ library url_navigator_service;
 import 'package:flutter/material.dart';
 
 class UrlNavigatorService {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  UrlNavigatorService({
+    @required this.navigatorKey,
+  });
 
   Future<dynamic> navigateTo(
     String routeName, {
