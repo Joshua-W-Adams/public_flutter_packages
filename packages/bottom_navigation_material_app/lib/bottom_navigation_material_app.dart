@@ -118,9 +118,9 @@ class NavigationTabModel {
   final GlobalKey<NavigatorState> navigatorKey;
 
   NavigationTabModel({
-    this.title,
-    this.icon,
-    this.url,
-    this.navigatorKey,
+    @required this.title,
+    @required this.icon,
+    @required this.url,
+    @required this.navigatorKey,
   });
 }
