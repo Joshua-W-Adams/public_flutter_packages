@@ -108,6 +108,10 @@ class StepProcessState extends State<StepProcess> {
     return widget.steps.length - 1 == index;
   }
 
+  bool onLastStep() {
+    return _isLast(_currentStep);
+  }
+
   void skipStep() {
     if (!_isLast(_currentStep)) {
       setState(() {
