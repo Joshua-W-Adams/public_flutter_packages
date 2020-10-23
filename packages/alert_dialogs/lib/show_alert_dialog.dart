@@ -7,8 +7,10 @@ Future<bool> showAlertDialog({
   String cancelActionText,
   @required String defaultActionText,
   void Function() onCloseCallback,
+  bool barrierDismissible = true,
 }) async {
   return await showDialog(
+    barrierDismissible: barrierDismissible,
     context: context,
     builder: (context) {
       return AlertDialog(
