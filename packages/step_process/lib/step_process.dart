@@ -54,6 +54,7 @@ class StepProcess extends StatefulWidget {
 class StepProcessState extends State<StepProcess> {
   PageController _controller = PageController();
   int _currentStep = 0;
+  bool _requestPending = false;
 
   @override
   void dispose() {
@@ -61,6 +62,34 @@ class StepProcessState extends State<StepProcess> {
     _controller.dispose();
     _controller = null;
     super.dispose();
+  }
+
+  /// [_processRequest] is a generic ui function for handling server requests.
+  /// Preventing users from performing additional requests while one is
+  /// processing.
+  void _processRequest({
+    Future<void> Function() requestFuture,
+  }) {
+    // check if request has already been issued
+    if (!_requestPending) {
+      // prevent user sending additional request while one is already underway
+      setState(() {
+        _requestPending = true;
+      });
+      // perform request
+      requestFuture().then((_) async {
+        // request successful
+        setState(() {
+          _requestPending = false;
+        });
+      }).catchError((e) async {
+        // request complete. allow user to send new request.
+        setState(() {
+          _requestPending = false;
+        });
+      });
+    }
+    // pending result of request. Do nothing.
   }
 
   void switchToPage(int page) {
@@ -92,14 +121,18 @@ class StepProcessState extends State<StepProcess> {
   }
 
   void onStepNext() {
-    // call validator method for moving to next step
-    String validation = widget.steps[_currentStep].validator();
-    if (validation == null) {
-      // on validation passed
-      skipStep();
-    } else {
-      // Validation failed - do Nothing
-    }
+    _processRequest(
+      requestFuture: () async {
+        // call validator method for moving to next step
+        String validation = await widget.steps[_currentStep].validator();
+        if (validation == null) {
+          // on validation passed
+          skipStep();
+        } else {
+          // Validation failed - do Nothing
+        }
+      },
+    );
   }
 
   void onStepBack() {
@@ -175,7 +208,7 @@ class StepProcessState extends State<StepProcess> {
       );
     }
     return RaisedButton(
-      onPressed: onStepBack,
+      onPressed: _requestPending == true ? null : onStepBack,
       child: Text(
         getPrevLabel(),
       ),
@@ -184,7 +217,7 @@ class StepProcessState extends State<StepProcess> {
 
   Widget _getNextButton() {
     return RaisedButton(
-      onPressed: onStepNext,
+      onPressed: _requestPending == true ? null : onStepBack,
       child: Text(
         getNextLabel(),
       ),
@@ -245,7 +278,7 @@ class StepModel {
   final Widget content;
   // validation required before allowing moving to the next step. Return null if
   // validation passed.
-  final String Function() validator;
+  final Future<String> Function() validator;
   // whether the state of the step will be peristed on moving between steps.
   // default is true.
   final bool persistState;
