@@ -217,7 +217,7 @@ class StepProcessState extends State<StepProcess> {
 
   Widget _getNextButton() {
     return RaisedButton(
-      onPressed: _requestPending == true ? null : onStepBack,
+      onPressed: _requestPending == true ? null : onStepNext,
       child: Text(
         getNextLabel(),
       ),
