@@ -48,10 +48,10 @@ class StepProcess extends StatefulWidget {
         super(key: key);
 
   @override
-  _StepProcessState createState() => _StepProcessState();
+  StepProcessState createState() => StepProcessState();
 }
 
-class _StepProcessState extends State<StepProcess> {
+class StepProcessState extends State<StepProcess> {
   PageController _controller = PageController();
   int _currentStep = 0;
 
