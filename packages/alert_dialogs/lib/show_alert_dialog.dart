@@ -6,43 +6,33 @@ Future<bool> showAlertDialog({
   @required String content,
   String cancelActionText,
   @required String defaultActionText,
+  void Function() onCloseCallback,
 }) async {
-  if (kIsWeb || !Platform.isIOS) {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
+  return await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
         title: Text(title),
         content: Text(content),
         actions: <Widget>[
           if (cancelActionText != null)
             FlatButton(
               child: Text(cancelActionText),
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () {
+                return Navigator.of(context).pop(false);
+              },
             ),
           FlatButton(
             child: Text(defaultActionText),
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              if (onCloseCallback != null) {
+                onCloseCallback();
+              }
+              return Navigator.of(context).pop(true);
+            },
           ),
         ],
-      ),
-    );
-  }
-  return await showCupertinoDialog(
-    context: context,
-    builder: (context) => CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(content),
-      actions: <Widget>[
-        if (cancelActionText != null)
-          CupertinoDialogAction(
-            child: Text(cancelActionText),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-        CupertinoDialogAction(
-          child: Text(defaultActionText),
-          onPressed: () => Navigator.of(context).pop(true),
-        ),
-      ],
-    ),
+      );
+    },
   );
 }
