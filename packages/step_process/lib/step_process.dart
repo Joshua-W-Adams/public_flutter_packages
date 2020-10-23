@@ -79,20 +79,24 @@ class _StepProcessState extends State<StepProcess> {
     return widget.steps.length - 1 == index;
   }
 
+  void skipStep() {
+    if (!_isLast(_currentStep)) {
+      setState(() {
+        _currentStep++;
+      });
+      FocusScope.of(context).unfocus();
+      switchToPage(_currentStep);
+    } else {
+      widget.onCompleted();
+    }
+  }
+
   void onStepNext() {
     // call validator method for moving to next step
     String validation = widget.steps[_currentStep].validator();
     if (validation == null) {
       // on validation passed
-      if (!_isLast(_currentStep)) {
-        setState(() {
-          _currentStep++;
-        });
-        FocusScope.of(context).unfocus();
-        switchToPage(_currentStep);
-      } else {
-        widget.onCompleted();
-      }
+      skipStep();
     } else {
       // Validation failed - do Nothing
     }
