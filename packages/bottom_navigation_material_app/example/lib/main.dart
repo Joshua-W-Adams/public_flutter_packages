@@ -254,6 +254,15 @@ class _AppShellState extends State<AppShell> {
         ],
         currentIndex: appState.selectedIndex,
         onTap: (newIndex) {
+          // user taps on already selected bottom navigation bar item
+          if (appState.selectedIndex == newIndex) {
+            /// HOLD - navigator.pop to only be called if there is an additional
+            /// page in the navigator stack on top of the [BooksListScreen] or
+            /// [SettingsScreen]. Additionally when navigator.pop() is called
+            /// when a [BookDetailsScreen] is on the stack it causes some
+            /// strange/ugly behaviour in the UI.
+            Navigator.of(context).pop();
+          }
           appState.selectedIndex = newIndex;
         },
       ),
