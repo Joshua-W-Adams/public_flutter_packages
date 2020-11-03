@@ -20,7 +20,7 @@ class NestedRouterDemo extends StatefulWidget {
 class _NestedRouterDemoState extends State<NestedRouterDemo> {
   BookRouterDelegate _routerDelegate = BookRouterDelegate();
   BookRouteInformationParser _routeInformationParser =
-  BookRouteInformationParser();
+      BookRouteInformationParser();
 
   @override
   Widget build(BuildContext context) {
@@ -175,14 +175,11 @@ class BookRouterDelegate extends RouterDelegate<BookRoutePath>
     if (path is BooksListPath) {
       appState.selectedIndex = 0;
       appState.selectedBook = null;
-
     } else if (path is BooksSettingsPath) {
       appState.selectedIndex = 1;
-
     } else if (path is BooksDetailsPath) {
       appState.selectedIndex = 0;
       appState.setSelectedBookById(path.id);
-
     }
   }
 }
@@ -245,7 +242,7 @@ class _AppShellState extends State<AppShell> {
     _backButtonDispatcher.takePriority();
 
     return Scaffold(
-      appBar: AppBar(leading:Container()),
+      appBar: AppBar(leading: Container()),
       body: Router(
         routerDelegate: _routerDelegate,
         backButtonDispatcher: _backButtonDispatcher,
@@ -365,8 +362,10 @@ class BooksListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setApplicationSwitcherDescription(ApplicationSwitcherDescription(
+    SystemChrome.setApplicationSwitcherDescription(
+        ApplicationSwitcherDescription(
       label: 'Books App List',
+      primaryColor: 0,
     ));
     return Scaffold(
       body: ListView(
@@ -393,8 +392,10 @@ class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var title = book.title;
-    SystemChrome.setApplicationSwitcherDescription(ApplicationSwitcherDescription(
+    SystemChrome.setApplicationSwitcherDescription(
+        ApplicationSwitcherDescription(
       label: 'Books App - $title',
+      primaryColor: 0,
     ));
     return Scaffold(
       body: Padding(
@@ -422,8 +423,10 @@ class BookDetailsScreen extends StatelessWidget {
 class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setApplicationSwitcherDescription(ApplicationSwitcherDescription(
+    SystemChrome.setApplicationSwitcherDescription(
+        ApplicationSwitcherDescription(
       label: 'Books App Settings',
+      primaryColor: 0,
     ));
     return Scaffold(
       body: Center(
