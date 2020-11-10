@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   # http:
+  crypto:
   firebase_auth:
   google_sign_in: ^4.1.0
   # support for flutter_facebook_login dropped as it causes conflicts with the 

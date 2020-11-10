@@ -11,6 +11,9 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:math';
+import 'dart:convert';
+import 'dart:io';
+import 'package:crypto/crypto.dart';
 
 part 'firebase_auth_service.dart';
 part 'auth_service_base_class.dart';

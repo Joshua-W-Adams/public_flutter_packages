@@ -363,8 +363,30 @@ class FirebaseAuthService implements AuthService {
   //   }
   // }
 
+  String _createNonce(int length) {
+    final random = Random();
+    final charCodes = List<int>.generate(length, (_) {
+      int codeUnit;
+      switch (random.nextInt(3)) {
+        case 0:
+          codeUnit = random.nextInt(10) + 48;
+          break;
+        case 1:
+          codeUnit = random.nextInt(26) + 65;
+          break;
+        case 2:
+          codeUnit = random.nextInt(26) + 97;
+          break;
+      }
+      return codeUnit;
+    });
+    return String.fromCharCodes(charCodes);
+  }
+
   Future<void> signInWithApple({
     AuthCredential authCredentialtoLink,
+    String redirectUri,
+    String clientId,
   }) async {
     // login not supported by web.
     if (kIsWeb) {
@@ -377,18 +399,36 @@ class FirebaseAuthService implements AuthService {
     }
 
     // commence the apple authorisation
-    final AuthorizationCredentialAppleID appleIdCredential =
-        await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-    );
+    final nonce = _createNonce(32);
+    final AuthorizationCredentialAppleID nativeAppleCred = Platform.isIOS
+        ? await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            nonce: sha256.convert(utf8.encode(nonce)).toString(),
+          )
+        : await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              redirectUri: Uri.parse(redirectUri),
+              clientId: clientId,
+            ),
+            nonce: sha256.convert(utf8.encode(nonce)).toString(),
+          );
 
-    final oAuthProvider = OAuthProvider('apple.com');
-    final credential = oAuthProvider.credential(
-      idToken: appleIdCredential.identityToken,
-      accessToken: appleIdCredential.authorizationCode,
+    final credential = OAuthCredential(
+      // MUST be "apple.com"
+      providerId: 'apple.com',
+      // MUST be "oauth"
+      signInMethod: 'oauth',
+      // propagate Apple ID token to BOTH accessToken and idToken parameters
+      accessToken: nativeAppleCred.identityToken,
+      idToken: nativeAppleCred.identityToken,
+      rawNonce: nonce,
     );
 
     try {
@@ -401,7 +441,7 @@ class FirebaseAuthService implements AuthService {
       if (error is PlatformException &&
           error.code == "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") {
         // get email address
-        String email = appleIdCredential.email;
+        String email = nativeAppleCred.email;
         // fetch providers for the email
         List<String> providers =
             await _firebaseAuth.fetchSignInMethodsForEmail(email);
