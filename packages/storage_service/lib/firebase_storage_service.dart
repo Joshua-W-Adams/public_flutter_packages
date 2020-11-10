@@ -12,11 +12,11 @@ class FirebaseStorageService {
 
   // *********************** Generic Upload Methods ***********************
 
-  double _getUploadProgress(StorageTaskSnapshot snapshot) {
-    int transferred = snapshot.bytesTransferred;
-    int total = snapshot.totalByteCount;
-    return (transferred / total * 100);
-  }
+  // double _getUploadProgress(StorageTaskSnapshot snapshot) {
+  //   int transferred = snapshot.bytesTransferred;
+  //   int total = snapshot.totalByteCount;
+  //   return (transferred / total * 100);
+  // }
 
   /// Generic file upload for any [path] and [contentType]
   /// uploads file to firebase then returns the download url to the user
@@ -27,14 +27,21 @@ class FirebaseStorageService {
   }) async {
     // get a reference to the provided file path on firebase
     final storageReference = FirebaseStorage.instance.ref().child(path);
-    // upload passed file to referenced filepath
-    final uploadTask = storageReference.putFile(
-      file,
-      StorageMetadata(
-        contentType: mimeType,
-      ),
-    );
-
+    try {
+      // upload passed file to referenced filepath
+      final uploadTask = await storageReference.putFile(
+        file,
+        SettableMetadata(
+          contentType: mimeType,
+        ),
+      );
+      // Url used to download file/image
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+      return downloadUrl;
+    } on FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+      rethrow;
+    }
     // TODO - Display upload progress to user
     // // listen to the upload task and log the progress of the upload to the console.
     // uploadTask.events.listen((event) {
@@ -65,18 +72,6 @@ class FirebaseStorageService {
     //     break;
     // }
     // });
-
-    // await completion of task
-    final snapshot = await uploadTask.onComplete;
-    // handle completion types
-    if (snapshot.error != null) {
-      // print('upload error code: ${snapshot.error}');
-      throw snapshot.error;
-    }
-    // Url used to download file/image
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-    // print('downloadUrl: $downloadUrl');
-    return downloadUrl;
   }
 
   // *********************** Specific Upload Methods ***********************
