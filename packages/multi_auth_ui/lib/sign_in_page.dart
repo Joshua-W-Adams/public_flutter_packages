@@ -75,33 +75,47 @@ class SignInPage extends StatelessWidget {
     );
   }
 
+  Widget _getWebDisplay(Widget child) {
+    if (kIsWeb) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: 9.0 / 16.0,
+          child: child,
+        ),
+      );
+    }
+    return child;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            _buildLogo(),
-            _buildLogoText(),
-            AuthOptions(
-              authOptionsTitle: 'Log In',
-              authProviders: authProviders,
-              signInAnonymously: signInAnonymously,
-              emailSignInCallback: emailSignInCallback,
-              signInWithGoogle: signInWithGoogle,
-              signInWithFacebook: signInWithFacebook,
-              signInWithApple: signInWithApple,
-              linkCredentialsErrorMessage: linkCredentialsErrorMessage,
-              linkCredentialsCallback: linkCredentialsCallback,
-            ),
-            TermsAndConditions(
-              termsOfUseCallback: termsOfUseCallback,
-              billingTermsCallback: billingTermsCallback,
-              privacyPolicyCallback: privacyPolicyCallback,
-            ),
-          ],
+      body: _getWebDisplay(
+        Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              _buildLogo(),
+              _buildLogoText(),
+              AuthOptions(
+                authOptionsTitle: 'Log In',
+                authProviders: authProviders,
+                signInAnonymously: signInAnonymously,
+                emailSignInCallback: emailSignInCallback,
+                signInWithGoogle: signInWithGoogle,
+                signInWithFacebook: signInWithFacebook,
+                signInWithApple: signInWithApple,
+                linkCredentialsErrorMessage: linkCredentialsErrorMessage,
+                linkCredentialsCallback: linkCredentialsCallback,
+              ),
+              TermsAndConditions(
+                termsOfUseCallback: termsOfUseCallback,
+                billingTermsCallback: billingTermsCallback,
+                privacyPolicyCallback: privacyPolicyCallback,
+              ),
+            ],
+          ),
         ),
       ),
     );

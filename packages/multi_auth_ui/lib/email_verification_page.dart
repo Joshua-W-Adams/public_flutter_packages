@@ -98,6 +98,18 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
     );
   }
 
+  Widget _getWebDisplay(Widget child) {
+    if (kIsWeb) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: 9.0 / 16.0,
+          child: child,
+        ),
+      );
+    }
+    return child;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,15 +121,17 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
           }
         },
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _buildDescription(),
-          _buildCheckVerificationStatus(),
-          _buildServerMessage(),
-          _buildSendEmailButton(),
-        ],
+      body: _getWebDisplay(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            _buildDescription(),
+            _buildCheckVerificationStatus(),
+            _buildServerMessage(),
+            _buildSendEmailButton(),
+          ],
+        ),
       ),
     );
   }

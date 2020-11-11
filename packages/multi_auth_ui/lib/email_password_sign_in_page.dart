@@ -212,16 +212,30 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     );
   }
 
+  Widget _getWebDisplay(Widget child) {
+    if (kIsWeb) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: 9.0 / 16.0,
+          child: child,
+        ),
+      );
+    }
+    return child;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(
         title: model.title,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: _buildContent(),
+      body: _getWebDisplay(
+        SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: _buildContent(),
+          ),
         ),
       ),
     );

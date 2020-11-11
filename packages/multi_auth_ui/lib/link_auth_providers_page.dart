@@ -33,29 +33,43 @@ class LinkAuthProvidersPage extends StatelessWidget {
     );
   }
 
+  Widget _getWebDisplay(Widget child) {
+    if (kIsWeb) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: 9.0 / 16.0,
+          child: child,
+        ),
+      );
+    }
+    return child;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(
         title: 'Link Authentication Credentials',
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          _buildDescription(context),
-          AuthOptions(
-            authOptionsTitle: 'Link Credentials',
-            authProviders: authProviders,
-            // never show separator
-            separatorLocation: null,
-            signInAnonymously: signInAnonymously,
-            signInWithApple: signInWithApple,
-            emailSignInCallback: emailSignInCallback,
-            signInWithGoogle: signInWithGoogle,
-            signInWithFacebook: signInWithFacebook,
-          ),
-        ],
+      body: _getWebDisplay(
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            _buildDescription(context),
+            AuthOptions(
+              authOptionsTitle: 'Link Credentials',
+              authProviders: authProviders,
+              // never show separator
+              separatorLocation: null,
+              signInAnonymously: signInAnonymously,
+              signInWithApple: signInWithApple,
+              emailSignInCallback: emailSignInCallback,
+              signInWithGoogle: signInWithGoogle,
+              signInWithFacebook: signInWithFacebook,
+            ),
+          ],
+        ),
       ),
     );
   }
