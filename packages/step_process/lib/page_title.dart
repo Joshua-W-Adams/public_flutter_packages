@@ -34,8 +34,7 @@ class PageTitle extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width * 0.8,
+              Expanded(
                 child: Text(
                   title,
                   style: titleTextStyle ??
