@@ -18,6 +18,9 @@ class ChewiePlayerScreen extends StatefulWidget {
   final bool showControls;
   final bool mute;
 
+  /// overrides default controller
+  final ChewieController chewieController;
+
   // {} = named parameters are required on class initialisation
   // @required = required parameters to be passed
   ChewiePlayerScreen({
@@ -29,6 +32,7 @@ class ChewiePlayerScreen extends StatefulWidget {
     this.autoPlay,
     this.showControls,
     this.mute,
+    this.chewieController,
   }) : super(key: key);
 
   @override
@@ -41,6 +45,11 @@ class _ChewiePlayerScreenState extends State<ChewiePlayerScreen> {
   VideoPlayerController videoPlayerController;
 
   void _getChewieVideo() {
+    if (widget.chewieController != null) {
+      _chewieController = widget.chewieController;
+      return;
+    }
+
     // https://flutter.dev/docs/cookbook/plugins/play-video
     if (widget.networkUrl != null) {
       videoPlayerController = VideoPlayerController.network(widget.networkUrl);
