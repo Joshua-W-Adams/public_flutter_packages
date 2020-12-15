@@ -60,13 +60,13 @@ class TreeBuilder extends StatelessWidget {
     List<BaseData> roots =
         model.getDirectChildrenFromParent(data: data, parentId: buildFromId);
     // perform recursive loop
-    return model.recursiveParentChildLoop(
+    return model.buildWidgetTree(
       parent: null,
-      children: roots,
+      depthData: roots,
       data: data,
-      childCallback: childBuilder,
-      parentCallback: parentBuilder,
-      endOfDepthCallback: endOfDepthBuilder,
+      onChild: childBuilder,
+      onParentUp: parentBuilder,
+      onEndOfDepth: endOfDepthBuilder,
     );
   }
 
