@@ -148,23 +148,23 @@ class TreeBuilderModel {
   }
 
   List<Widget> _addToArray(
-    Map<int, List<Widget>> tree,
+    Map<BaseData, List<Widget>> tree,
     Widget item,
-    int depth,
+    BaseData parent,
   ) {
-    List<Widget> arr;
+    List<Widget> children;
 
     /// create array if it does not already exist
-    if (tree[depth] == null) {
-      arr = [];
+    if (tree[parent] == null) {
+      children = [];
     } else {
-      arr = tree[depth];
+      children = tree[parent];
     }
 
     /// add item to array
-    arr.add(item);
+    children.add(item);
 
-    return arr;
+    return children;
   }
 
   /// [buildWidgetTree] is a wrapper to the [_recursiveParentChildLoop] function
@@ -181,7 +181,7 @@ class TreeBuilderModel {
     Widget Function(BaseData parent, int depth) onEndOfDepth,
   }) {
     /// create widget array for storing generated tree
-    Map<int, List<Widget>> tree = Map<int, List<Widget>>();
+    Map<BaseData, List<Widget>> tree = Map<BaseData, List<Widget>>();
 
     /// perform recursive loop to generate tree
     recursiveParentChildLoop(
@@ -194,7 +194,7 @@ class TreeBuilderModel {
         Widget cWidget = onChild(child, parent, depth);
 
         /// store widget in current depth array
-        tree[depth] = _addToArray(tree, cWidget, depth);
+        tree[parent] = _addToArray(tree, cWidget, parent);
       },
 
       /// unused - pass function to prevent missing callback errors
@@ -202,25 +202,25 @@ class TreeBuilderModel {
       onParentUp: (BaseData parent, BaseData parentParent,
           List<BaseData> children, int depth) {
         /// get children
-        List<Widget> cWidgets = tree[depth + 1];
+        List<Widget> cWidgets = tree[parent];
 
         /// generate widget
         Widget pWidget =
             onParentUp(parent, parentParent, children, depth, cWidgets);
 
         /// store widget
-        tree[depth] = _addToArray(tree, pWidget, depth);
+        tree[parentParent] = _addToArray(tree, pWidget, parentParent);
       },
       onEndOfDepth: (BaseData parent, int depth) {
         /// generate widget
         Widget endWidget = onEndOfDepth(parent, depth);
 
         /// store widget
-        tree[depth] = _addToArray(tree, endWidget, depth);
+        tree[parent] = _addToArray(tree, endWidget, parent);
       },
     );
 
-    return tree[depth];
+    return tree[parent];
 
     /// Old recursive loop logic
     //   List<Widget> depthWidgets = [];
