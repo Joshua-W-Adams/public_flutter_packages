@@ -15,3 +15,5 @@ part 'crud_list.dart';
 part 'terms_and_conditions.dart';
 part 'checkout.dart';
 part 'generic_stream_builder.dart';
+part 'text_highlighter.dart';
+part 'ui_stream_builder.dart';
