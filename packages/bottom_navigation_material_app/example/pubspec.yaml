@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   bottom_navigation_material_app: 
-    path: ..\
+    path: ../
 
 
   # The following adds the Cupertino Icons font to your application.
