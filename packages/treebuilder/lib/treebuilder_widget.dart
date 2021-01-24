@@ -90,12 +90,17 @@ class ParentWidget extends StatefulWidget {
   final IconData arrowIcon;
   // final bool shouldExpand;
   // final Function onToggle;
+
+  /// style configuration properties
+  final Color parentRowColor;
+
   ParentWidget({
     @required this.parent,
     @required this.children,
     this.arrowIcon = Icons.keyboard_arrow_down,
     // this.shouldExpand = false,
     // this.onToggle,
+    this.parentRowColor,
     Key key,
   }) : super(key: key);
 
@@ -154,34 +159,37 @@ class _ParentWidgetState extends State<ParentWidget>
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                // if (widget.onToggle != null) {
-                //   widget.onToggle();
-                // }
-                setState(() {
-                  shouldExpand = !shouldExpand;
-                });
-                if (shouldExpand) {
-                  expandController.forward();
-                } else {
-                  expandController.reverse();
-                }
-              },
-              icon: RotationTransition(
-                turns: sizeAnimation,
-                child: Icon(
-                  widget.arrowIcon,
+        Container(
+          color: widget.parentRowColor,
+          child: Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  // if (widget.onToggle != null) {
+                  //   widget.onToggle();
+                  // }
+                  setState(() {
+                    shouldExpand = !shouldExpand;
+                  });
+                  if (shouldExpand) {
+                    expandController.forward();
+                  } else {
+                    expandController.reverse();
+                  }
+                },
+                icon: RotationTransition(
+                  turns: sizeAnimation,
+                  child: Icon(
+                    widget.arrowIcon,
+                  ),
                 ),
               ),
-            ),
-            // parent widget builder executed here
-            Expanded(
-              child: widget.parent,
-            ),
-          ],
+              // parent widget builder executed here
+              Expanded(
+                child: widget.parent,
+              ),
+            ],
+          ),
         ),
         ChildWidget(
           children: widget.children,

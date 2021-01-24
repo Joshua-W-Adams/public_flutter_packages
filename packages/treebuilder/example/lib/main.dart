@@ -82,10 +82,11 @@ class Tree extends StatelessWidget {
           ],
         );
       },
-      parentBuilder: (parent, _, __, ___, childrenWidgets) {
+      parentBuilder: (parent, _, __, depth, childrenWidgets) {
         SampleBaseData p = parent;
         return ParentWidget(
           parent: Text('${p.name}'),
+          parentRowColor: depth == 0 ? Colors.lightBlue : null,
           children: childrenWidgets,
           arrowIcon: Icons.keyboard_arrow_down,
         );
