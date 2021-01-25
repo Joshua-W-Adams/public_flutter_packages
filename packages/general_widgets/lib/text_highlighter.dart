@@ -20,7 +20,7 @@ class TextHighlighter extends StatelessWidget {
     @required this.query,
     this.style,
     this.maxLines,
-    this.overflow,
+    this.overflow = TextOverflow.clip,
     this.baseColor,
     this.highlightColor,
     this.prefixSpan,
