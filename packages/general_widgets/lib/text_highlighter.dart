@@ -1,8 +1,14 @@
 part of general_widgets;
 
+/// [TextHightlighter] will use a provided regular expression to search through
+/// a text string then return a [RichText] widget with any regular expression
+/// matches highlighted in the [highlightColor] specified.
 class TextHighlighter extends StatelessWidget {
   final String text;
   final RegExp query;
+  final TextStyle style;
+  final int maxLines;
+  final TextOverflow overflow;
   final Color baseColor;
   final Color highlightColor;
   final TextSpan prefixSpan;
@@ -12,6 +18,9 @@ class TextHighlighter extends StatelessWidget {
   TextHighlighter({
     @required this.text,
     @required this.query,
+    this.style,
+    this.maxLines,
+    this.overflow,
     this.baseColor,
     this.highlightColor,
     this.prefixSpan,
@@ -77,7 +86,10 @@ class TextHighlighter extends StatelessWidget {
     }
 
     return RichText(
+      maxLines: maxLines,
+      overflow: overflow,
       text: TextSpan(
+        style: style,
         children: hightlightedText,
       ),
     );
