@@ -258,4 +258,42 @@ class TreeBuilderModel {
     //   }
     //   return depthWidgets;
   }
+
+  void recursiveParentLookupLoop<T extends BaseData>({
+    /// direct parent node of depth data
+    T node,
+
+    /// all parent child data
+    List<T> data,
+
+    /// child node encountered
+    void Function(T child, T parent) onParent,
+  }) {
+    if (node.getParentId() != null) {
+      // case 1 - any node besides root node
+
+      // loop through nodes in parent child tree
+      for (var i = 0; i < data.length; i++) {
+        // store current node
+        T n = data[i];
+
+        if (n.getId() == node.getParentId()) {
+          // case 1.1 - parent found
+          T parent = n;
+          // perform specific operations for parent
+          onParent(node, parent);
+          // recursively call function
+          recursiveParentLookupLoop(
+            node: parent,
+            data: data,
+            onParent: onParent,
+          );
+          // end current loop to prevent un-necessary processing
+          break;
+        }
+        // case 1.2 - parent not found, continue searching data
+      }
+    }
+    // case 2 - root node passed - do nothing
+  }
 }
