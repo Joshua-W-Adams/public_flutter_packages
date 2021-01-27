@@ -2,47 +2,44 @@ part of multi_auth_ui;
 
 class EmailPasswordSignInPageBuilder extends StatelessWidget {
   final VoidCallback onSignedIn;
-  final EmailPasswordSignInModel model;
+  final EmailPasswordSignInBloc bloc;
   final String initialEmail;
   final String initialPassword;
 
   const EmailPasswordSignInPageBuilder({
     Key key,
     this.onSignedIn,
-    @required this.model,
+    @required this.bloc,
     this.initialEmail,
     this.initialPassword,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<EmailPasswordSignInModel>(
-      create: (_) {
-        return model;
+    /// [UiStreamBuilder] handles all generic stream errors
+    return UiStreamBuilder(
+      stream: bloc.stream,
+      builder: (_, snapshot) {
+        return EmailPasswordSignInPage(
+          bloc: snapshot.data,
+          onSignedIn: onSignedIn,
+          initialEmail: initialEmail,
+          initialPassword: initialPassword,
+        );
       },
-      child: Consumer<EmailPasswordSignInModel>(
-        builder: (_, model, __) {
-          return EmailPasswordSignInPage(
-            model: model,
-            onSignedIn: onSignedIn,
-            initialEmail: initialEmail,
-            initialPassword: initialPassword,
-          );
-        },
-      ),
     );
   }
 }
 
 class EmailPasswordSignInPage extends StatefulWidget {
-  final EmailPasswordSignInModel model;
+  final EmailPasswordSignInBloc bloc;
   final VoidCallback onSignedIn;
   final String initialEmail;
   final String initialPassword;
 
   const EmailPasswordSignInPage({
     Key key,
-    @required this.model,
+    @required this.bloc,
     this.onSignedIn,
     this.initialEmail,
     this.initialPassword,
@@ -57,8 +54,8 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  EmailPasswordSignInModel get model {
-    return widget.model;
+  EmailPasswordSignInBloc get bloc {
+    return widget.bloc;
   }
 
   @override
@@ -66,11 +63,11 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     // set default values of email and password if provided
     if (widget.initialEmail != null) {
       _emailController.text = widget.initialEmail;
-      widget.model.email = widget.initialEmail;
+      widget.bloc.email = widget.initialEmail;
     }
     if (widget.initialPassword != null) {
       _passwordController.text = widget.initialPassword;
-      widget.model.password = widget.initialPassword;
+      widget.bloc.password = widget.initialPassword;
     }
     super.initState();
   }
@@ -82,19 +79,19 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
     super.dispose();
   }
 
-  void _showSignInError(EmailPasswordSignInModel model, dynamic exception) {
+  void _showSignInError(EmailPasswordSignInBloc bloc, dynamic exception) {
     showExceptionAlertDialog(
       context: context,
-      title: model.errorAlertTitle,
+      title: bloc.errorAlertTitle,
       exception: exception,
     );
   }
 
   Future<void> _submit() async {
     try {
-      final bool success = await model.submit();
+      final bool success = await bloc.submit();
       if (success) {
-        if (model.formType == EmailPasswordSignInFormType.forgotPassword) {
+        if (bloc.formType == EmailPasswordSignInFormType.forgotPassword) {
           await showAlertDialog(
             context: context,
             title: 'Reset Link Sent',
@@ -109,12 +106,12 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
         }
       }
     } catch (e) {
-      _showSignInError(model, e);
+      _showSignInError(bloc, e);
     }
   }
 
   void _updateFormType(EmailPasswordSignInFormType formType) {
-    model.updateFormType(formType);
+    bloc.updateFormType(formType);
     _emailController.clear();
     _passwordController.clear();
   }
@@ -122,11 +119,12 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   Widget _buildEmailField() {
     return TextField(
       key: Key('email'),
+      autofillHints: [AutofillHints.username],
       controller: _emailController,
       decoration: InputDecoration(
         labelText: 'Email',
-        errorText: model.emailErrorText,
-        enabled: !model.isLoading,
+        errorText: bloc.emailErrorText,
+        // enabled: !bloc.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
@@ -137,9 +135,9 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
       keyboardAppearance: Brightness.light,
-      onChanged: model.updateEmail,
+      onChanged: bloc.updateEmail,
       inputFormatters: <TextInputFormatter>[
-        model.emailInputFormatter,
+        bloc.emailInputFormatter,
       ],
     );
   }
@@ -147,11 +145,12 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   Widget _buildPasswordField() {
     return TextField(
       key: Key('password'),
+      autofillHints: [AutofillHints.password],
       controller: _passwordController,
       decoration: InputDecoration(
-        labelText: model.passwordLabelText,
-        errorText: model.passwordErrorText,
-        enabled: !model.isLoading,
+        labelText: bloc.passwordLabelText,
+        errorText: bloc.passwordErrorText,
+        // enabled: !bloc.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
             color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
@@ -162,8 +161,15 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       obscureText: true,
       autocorrect: false,
       keyboardAppearance: Brightness.light,
-      onChanged: model.updatePassword,
+      onChanged: bloc.updatePassword,
     );
+  }
+
+  void _clearFocus() {
+    // create a temp focus node to set focus to
+    FocusNode _dummy = FocusNode();
+    // assign this focus node
+    FocusScope.of(context).requestFocus(_dummy);
   }
 
   Widget _buildContent() {
@@ -171,18 +177,31 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         SizedBox(height: 16.0),
-        _buildEmailField(),
-        if (model.formType !=
-            EmailPasswordSignInFormType.forgotPassword) ...<Widget>[
-          SizedBox(height: 16.0),
-          _buildPasswordField(),
-        ],
+
+        /// https://github.com/flutter/flutter/pull/52126
+        AutofillGroup(
+          child: Column(
+            children: [
+              _buildEmailField(),
+              if (bloc.formType !=
+                  EmailPasswordSignInFormType.forgotPassword) ...<Widget>[
+                SizedBox(height: 16.0),
+                _buildPasswordField(),
+              ],
+            ],
+          ),
+        ),
         SizedBox(height: 16.0),
         CustomRaisedButton(
           key: Key('primary-button'),
-          child: Text(model.primaryButtonText),
-          loading: model.isLoading,
-          onPressed: model.isLoading ? null : _submit,
+          child: Text(bloc.primaryButtonText),
+          loading: bloc.isLoading,
+          onPressed: bloc.isLoading
+              ? null
+              : () {
+                  _clearFocus();
+                  _submit();
+                },
           disabledColor: Theme.of(context).canvasColor,
           color: Theme.of(context).primaryColor,
           textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
@@ -190,18 +209,18 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
         SizedBox(height: 16.0),
         FlatButton(
           key: Key('secondary-button'),
-          child: Text(model.secondaryButtonText),
-          onPressed: model.isLoading
+          child: Text(bloc.secondaryButtonText),
+          onPressed: bloc.isLoading
               ? null
               : () {
-                  return _updateFormType(model.secondaryActionFormType);
+                  return _updateFormType(bloc.secondaryActionFormType);
                 },
         ),
-        if (model.formType == EmailPasswordSignInFormType.signIn)
+        if (bloc.formType == EmailPasswordSignInFormType.signIn)
           FlatButton(
             key: Key('tertiary-button'),
             child: Text('Forgot your password?'),
-            onPressed: model.isLoading
+            onPressed: bloc.isLoading
                 ? null
                 : () {
                     return _updateFormType(
@@ -228,7 +247,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(
-        title: model.title,
+        title: bloc.title,
       ),
       body: _getWebDisplay(
         SingleChildScrollView(

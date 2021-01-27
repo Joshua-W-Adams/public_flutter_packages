@@ -2,7 +2,7 @@ part of multi_auth_ui;
 
 enum EmailPasswordSignInFormType { signIn, register, forgotPassword }
 
-class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
+class EmailPasswordSignInBloc with EmailAndPasswordValidators {
   String email;
   String password;
   EmailPasswordSignInFormType formType;
@@ -14,7 +14,11 @@ class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
       createUserWithEmailAndPassword;
   final Future Function(String email) sendPasswordResetEmail;
 
-  EmailPasswordSignInModel({
+  /// create stream controller
+  StreamController<EmailPasswordSignInBloc> _controller =
+      StreamController<EmailPasswordSignInBloc>();
+
+  EmailPasswordSignInBloc({
     this.email = '',
     this.password = '',
     this.formType = EmailPasswordSignInFormType.signIn,
@@ -23,7 +27,15 @@ class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
     @required this.signInWithEmailAndPassword,
     @required this.createUserWithEmailAndPassword,
     @required this.sendPasswordResetEmail,
-  });
+  }) {
+    /// initialise stream
+    _controller.sink.add(this);
+  }
+
+  /// expose stream for listening
+  Stream<EmailPasswordSignInBloc> get stream {
+    return _controller.stream;
+  }
 
   Future<bool> submit() async {
     try {
@@ -81,7 +93,7 @@ class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
     this.formType = formType ?? this.formType;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
-    notifyListeners();
+    _controller.sink.add(this);
   }
 
   String get passwordLabelText {
@@ -169,5 +181,9 @@ class EmailPasswordSignInModel with EmailAndPasswordValidators, ChangeNotifier {
   @override
   String toString() {
     return 'email: $email, password: $password, formType: $formType, isLoading: $isLoading, submitted: $submitted';
+  }
+
+  void dispose() {
+    _controller.close();
   }
 }

@@ -19,7 +19,7 @@ class RouteGenerator {
         break;
       case PublicRoutes.signInEmailPassword:
         builder = (BuildContext context) {
-          var emailPasswordSignInModel = EmailPasswordSignInModel(
+          var emailPasswordSignInBloc = EmailPasswordSignInBloc(
             signInWithEmailAndPassword: (email, password) {
               return;
             },
@@ -31,7 +31,7 @@ class RouteGenerator {
             },
           );
           return EmailPasswordSignInPageBuilder(
-            model: emailPasswordSignInModel,
+            bloc: emailPasswordSignInBloc,
           );
         };
         break;
