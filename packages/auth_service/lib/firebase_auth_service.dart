@@ -47,7 +47,6 @@ class FirebaseAuthService implements AuthService {
       _firebaseAuth.userChanges().listen((User user) {
         /// confirm user object has not already been injected by
         /// authStateChanges listener
-        print('_firebaseAuth.currentUser: ${_firebaseAuth.currentUser}');
         if (_firebaseAuth.currentUser == null && user != null) {
           _authStream.add(user);
         }
