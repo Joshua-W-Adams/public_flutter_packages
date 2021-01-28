@@ -162,6 +162,9 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       autocorrect: false,
       keyboardAppearance: Brightness.light,
       onChanged: bloc.updatePassword,
+      onSubmitted: (String value) {
+        _submit();
+      },
     );
   }
 
