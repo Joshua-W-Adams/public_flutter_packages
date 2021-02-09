@@ -1,38 +1,29 @@
 part of treebuilder;
 
-typedef ChildBuilderFunction = Widget Function(
-  BaseData child,
-  BaseData parent,
-  int depth,
-);
-
-typedef ParentBuilderFunction = Widget Function(
-  BaseData parent,
-  BaseData parentParent,
-  List<BaseData> children,
-  int depth,
-  List<Widget> childrenWidgets,
-);
-
-typedef EndBuilderFunction = Widget Function(
-  BaseData parent,
-  int depth,
-);
-
 /// A tree view that supports indefinite parent/child datastructures with
 /// passable widget builder for parent, child and last row in depth.
-class TreeBuilder extends StatelessWidget {
+class TreeBuilder<T extends BaseData> extends StatelessWidget {
   /// TreeBuilder will be constructed based on this parent child data array.
   /// Create a model class and implement [BaseData]
-  final List<BaseData> data;
+  final List<T> data;
 
   /// widget builder functions that are called for parent and child items
-  final ParentBuilderFunction parentBuilder;
-  final ChildBuilderFunction childBuilder;
+  final Widget Function(
+    T parent,
+    T parentParent,
+    List<T> children,
+    int depth,
+    List<Widget> childrenWidgets,
+  ) parentBuilder;
+
+  final Widget Function(T child, T parent, int depth) childBuilder;
 
   /// widget builder function called when the last child of a parent is
   /// encountered at every tree depth level
-  final EndBuilderFunction endOfDepthBuilder;
+  final Widget Function(
+    T parent,
+    int depth,
+  ) endOfDepthBuilder;
 
   /// Fetchs the immediate children of root. Default is null.
   final String buildFromId;
@@ -57,11 +48,20 @@ class TreeBuilder extends StatelessWidget {
   List<Widget> _buildTree() {
     TreeBuilderModel model = TreeBuilderModel();
     // get all root data to start from
-    List<BaseData> roots =
+    List<T> roots =
         model.getDirectChildrenFromParent(data: data, parentId: buildFromId);
+
+    /// get parent data
+    T parent = data.firstWhere((element) {
+      return element.getId() == buildFromId;
+    }, orElse: () {
+      /// no element matching id found
+      return null;
+    });
+
     // perform recursive loop
-    return model.buildWidgetTree(
-      parent: null,
+    return model.buildWidgetTree<T>(
+      parent: parent,
       depthData: roots,
       data: data,
       onChild: childBuilder,

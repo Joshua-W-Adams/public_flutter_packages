@@ -28,14 +28,14 @@ class TreeBuilderModel {
     }).toList();
   }
 
-  List<BaseData> getAllChildrenFromParents({
-    List<BaseData> parents,
-    List<BaseData> data,
+  List<T> getAllChildrenFromParents<T extends BaseData>({
+    List<T> parents,
+    List<T> data,
   }) {
-    List<BaseData> depthData = [];
+    List<T> depthData = [];
     parents.forEach(
       (parent) {
-        List<BaseData> parentChildren = getDirectChildrenFromParent(
+        List<T> parentChildren = getDirectChildrenFromParent(
           data: data,
           parentId: parent.getId(),
         );
@@ -44,7 +44,7 @@ class TreeBuilderModel {
           depthData.add(parent);
         } else {
           // case 2 - children
-          List<BaseData> cData = getAllChildrenFromParents(
+          List<T> cData = getAllChildrenFromParents(
             parents: parentChildren,
             data: data,
           );
@@ -147,10 +147,10 @@ class TreeBuilderModel {
     }
   }
 
-  List<Widget> _addToArray(
-    Map<BaseData, List<Widget>> tree,
+  List<Widget> _addToArray<T extends BaseData>(
+    Map<T, List<Widget>> tree,
     Widget item,
-    BaseData parent,
+    T parent,
   ) {
     List<Widget> children;
 
@@ -169,38 +169,37 @@ class TreeBuilderModel {
 
   /// [buildWidgetTree] is a wrapper to the [_recursiveParentChildLoop] function
   /// that the ability to construct a widget tree from the loop.
-  List<Widget> buildWidgetTree({
-    BaseData parent,
-    List<BaseData> depthData,
-    List<BaseData> data,
+  List<Widget> buildWidgetTree<T extends BaseData>({
+    T parent,
+    List<T> depthData,
+    List<T> data,
     int depth = 0,
-    Widget Function(BaseData child, BaseData parent, int depth) onChild,
-    Widget Function(BaseData parent, BaseData parentParent,
-            List<BaseData> children, int depth, List<Widget> childrenWidgets)
+    Widget Function(T child, T parent, int depth) onChild,
+    Widget Function(T parent, T parentParent, List<T> children, int depth,
+            List<Widget> childrenWidgets)
         onParentUp,
-    Widget Function(BaseData parent, int depth) onEndOfDepth,
+    Widget Function(T parent, int depth) onEndOfDepth,
   }) {
     /// create widget array for storing generated tree
-    Map<BaseData, List<Widget>> tree = Map<BaseData, List<Widget>>();
+    Map<T, List<Widget>> tree = Map<T, List<Widget>>();
 
     /// perform recursive loop to generate tree
-    recursiveParentChildLoop(
+    recursiveParentChildLoop<T>(
       parent: parent,
       depthData: depthData,
       data: data,
       depth: depth,
-      onChild: (BaseData child, BaseData parent, int depth) {
+      onChild: (T child, T parent, int depth) {
         /// generate widget
         Widget cWidget = onChild(child, parent, depth);
 
         /// store widget in current depth array
-        tree[parent] = _addToArray(tree, cWidget, parent);
+        tree[parent] = _addToArray<T>(tree, cWidget, parent);
       },
 
       /// unused - pass function to prevent missing callback errors
       onParentDown: (_, __, ___, ____) {},
-      onParentUp: (BaseData parent, BaseData parentParent,
-          List<BaseData> children, int depth) {
+      onParentUp: (T parent, T parentParent, List<T> children, int depth) {
         /// get children
         List<Widget> cWidgets = tree[parent];
 
@@ -209,14 +208,14 @@ class TreeBuilderModel {
             onParentUp(parent, parentParent, children, depth, cWidgets);
 
         /// store widget
-        tree[parentParent] = _addToArray(tree, pWidget, parentParent);
+        tree[parentParent] = _addToArray<T>(tree, pWidget, parentParent);
       },
-      onEndOfDepth: (BaseData parent, int depth) {
+      onEndOfDepth: (T parent, int depth) {
         /// generate widget
         Widget endWidget = onEndOfDepth(parent, depth);
 
         /// store widget
-        tree[parent] = _addToArray(tree, endWidget, parent);
+        tree[parent] = _addToArray<T>(tree, endWidget, parent);
       },
     );
 
