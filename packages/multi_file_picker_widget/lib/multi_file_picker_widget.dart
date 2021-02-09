@@ -405,7 +405,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
         },
       ),
       itemCount: _files.length,
-      itemBuilder: (BuildContext ctx, int index) {
+      itemBuilder: (BuildContext ctx, int index, _) {
         if (_files[index] is FileUploadModel) {
           // case 1 - file
           return _buildFileCard(index);
