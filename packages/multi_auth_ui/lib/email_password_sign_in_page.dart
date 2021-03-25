@@ -169,10 +169,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   }
 
   void _clearFocus() {
-    // create a temp focus node to set focus to
-    FocusNode _dummy = FocusNode();
-    // assign this focus node
-    FocusScope.of(context).requestFocus(_dummy);
+    FocusScope.of(context).unfocus();
   }
 
   Widget _buildContent() {
