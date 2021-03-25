@@ -144,7 +144,9 @@ class _CrudListState<T> extends State<CrudList<T>> {
           _requestPending = false;
         });
         // inform user of successful request
-        Scaffold.of(context).showSnackBar(
+        ScaffoldMessengerState scaffoldMessengerState =
+            ScaffoldMessenger.of(context);
+        scaffoldMessengerState.showSnackBar(
           SnackBar(
             content: Text(
               'Request to server completed successfully.',
