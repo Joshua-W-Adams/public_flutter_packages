@@ -1,113 +1,123 @@
+import 'package:example/services/mockDataService.dart';
 import 'package:flutter/material.dart';
+import 'package:premo_table/premo_table.dart';
+import 'models/sampleDataModel.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: Scaffold(
+        body: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: SampleCRUDTableBuilder(),
+        ),
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+class SampleCRUDTableBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    /// create sample array of data
+    List<SampleDataModel> data = [
+      SampleDataModel(id: '1', name: 'Josh', age: 32),
+      SampleDataModel(id: '2', name: 'Rachel', age: 27),
+      SampleDataModel(id: '3', name: 'Shannon', age: 35),
+    ];
+
+    /// generate data service that provide stream of mocked server data
+    MockDataService<SampleDataModel> mockDataStream =
+        MockDataService(data: data);
+
+    /// create BLoC with mocked service
+    CrudTableBloc<SampleDataModel> _crudTableBloc = CrudTableBloc(
+      inputStream: mockDataStream.stream,
+    );
+
+    /// generate instance of table
+    return CrudTable<SampleDataModel>(
+      crudTableBloc: _crudTableBloc,
+      columnNames: [
+        'Id',
+        'Name',
+        'Age',
+      ],
+      columnWidths: [75.0, 200.0, 75.0],
+      editableColumns: [false, true, true],
+      columnAlignments: [TextAlign.center, TextAlign.left, TextAlign.center],
+      columnDataFormats: ['text', 'text', 'text'],
+      columnTypes: ['standard', 'standard', 'standard'],
+      columnDropdownLists: [null, null, null],
+      // cellTextStyleBuilder: (item, row, col) {
+      //   /// return some TextStyle override if necessary
+      //   return null;
+      // },
+      // columnValidators: [null, null, null],
+      cellValueBuilder: (item, row, col) {
+        if (col == 0) {
+          return item.id;
+        } else if (col == 1) {
+          return item.name;
+        } else {
+          return item.age?.toString();
+        }
+      },
+      // cellWidgetBuilder: (item, row, col) {
+      /// replace entire widget in a specific cell
+      // return Widget;
+      // },
+      // onAdd: () async {
+      /// create new item template
+      // TransactionItemModel item = TransactionItemModel(
+      //   id: 'pending',
+      //   parentId: widget.parentTransactionItemId,
+      //   dateAdded: DateTime.now(),
+      // );
+
+      /// add budget item to server
+      // await _db.addTransactionItem(
+      //   budgetId: widget.budgetId,
+      //   item: item,
+      // );
+      // },
+      // onDelete: (item, _) async {
+      // await _db.deleteSingleTransactionItem(
+      //   budgetId: widget.budgetId,
+      //   transactionItemId: item.id,
+      // );
+      // },
+      onUpdate: (item, value, _, col) async {
+        /// store item details in model instance
+        if (col == 0) {
+          /// N/A - non editable column
+        } else if (col == 1) {
+          item.name = value;
+        } else {
+          item.age = num.tryParse(value);
+        }
+
+        /// update item to database
+        // _db.updateTransactionItem(
+        //   budgetId: widget.budgetId,
+        //   item: item,
+        // );
+      },
+      // rowKeyBuilder: (item, _) {
+      //   /// Use transaction item doc identifier as the unique key for a row
+      //   /// prevents on change cell functions firing on removal of existing
+      //   /// rows.
+      //   return item.id;
+      // },
     );
   }
 }
