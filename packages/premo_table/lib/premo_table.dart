@@ -1,7 +1,13 @@
 library premo_table;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:general_widgets/general_widgets.dart';
+
+part 'better_table.dart';
+part 'cell.dart';
+part 'crud_table_bloc.dart';
+part 'crud_table.dart';
+part 'data_formatter.dart';
+part 'input_formatter.dart';
