@@ -31,7 +31,7 @@ class ShowError extends StatelessWidget {
                 SizedBox(height: 10),
                 RichText(
                   text: TextSpan(
-                    text: 'Error: $error',
+                    text: '$error',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.black54,
