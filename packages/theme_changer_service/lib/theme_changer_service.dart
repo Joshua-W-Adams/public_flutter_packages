@@ -48,33 +48,26 @@ class ThemeChangerService with ChangeNotifier {
 
   ThemeData _generateTheme(ThemeConfiguration themeConfiguration) {
     Color? primaryColour = themeConfiguration.primaryColor;
-    Color? textSelectionColor = primaryColour != null
-        ? ColorFunctions.getContrastingShadeColor(primaryColour)
-        : null;
+    ThemeData baseThemeData;
 
     if (themeConfiguration.baseTheme == 'light') {
-      return ThemeData.light().copyWith(
-        primaryColor: primaryColour,
-        accentColor: themeConfiguration.accentColor,
-        textSelectionTheme: textSelectionColor != null
-            ? TextSelectionThemeData(
-                cursorColor: textSelectionColor,
-                selectionColor: textSelectionColor,
-                selectionHandleColor: textSelectionColor,
-              )
-            : null,
-      );
+      baseThemeData = ThemeData.light();
+    } else {
+      baseThemeData = ThemeData.dark();
     }
-    return ThemeData.dark().copyWith(
+
+    Color? textSelectionColor = primaryColour != null
+        ? ColorFunctions.getContrastingShadeColor(primaryColour)
+        : ColorFunctions.getContrastingShadeColor(baseThemeData.primaryColor);
+
+    return baseThemeData.copyWith(
       primaryColor: primaryColour,
       accentColor: themeConfiguration.accentColor,
-      textSelectionTheme: textSelectionColor != null
-          ? TextSelectionThemeData(
-              cursorColor: textSelectionColor,
-              selectionColor: textSelectionColor,
-              selectionHandleColor: textSelectionColor,
-            )
-          : null,
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: textSelectionColor,
+        selectionColor: textSelectionColor,
+        selectionHandleColor: textSelectionColor,
+      ),
     );
   }
 
