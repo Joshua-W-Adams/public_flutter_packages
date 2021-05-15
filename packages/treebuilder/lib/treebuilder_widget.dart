@@ -10,33 +10,33 @@ class TreeBuilder<T extends BaseData> extends StatelessWidget {
   /// widget builder functions that are called for parent and child items
   final Widget Function(
     T parent,
-    T parentParent,
+    T? parentParent,
     List<T> children,
     int depth,
     List<Widget> childrenWidgets,
   ) parentBuilder;
 
-  final Widget Function(T child, T parent, int depth) childBuilder;
+  final Widget Function(T child, T? parent, int depth) childBuilder;
 
   /// widget builder function called when the last child of a parent is
   /// encountered at every tree depth level
   final Widget Function(
-    T parent,
+    T? parent,
     int depth,
   ) endOfDepthBuilder;
 
   /// Fetchs the immediate children of root. Default is null.
-  final String buildFromId;
+  final String? buildFromId;
 
   // constructed instance of tree
-  List<Widget> _tree;
+  List<Widget>? _tree;
 
   TreeBuilder({
-    Key key,
-    @required this.data,
-    @required this.parentBuilder,
-    @required this.childBuilder,
-    this.endOfDepthBuilder,
+    Key? key,
+    required this.data,
+    required this.parentBuilder,
+    required this.childBuilder,
+    required this.endOfDepthBuilder,
     this.buildFromId,
   }) : super(key: key) {
     // recursive build tree funciton needs to occur as soon as the tree is
@@ -53,11 +53,8 @@ class TreeBuilder<T extends BaseData> extends StatelessWidget {
     );
 
     /// get parent data
-    T parent = data.firstWhere((element) {
+    T? parent = data.firstWhereOrNull((element) {
       return element.getId() == buildFromId;
-    }, orElse: () {
-      /// no element matching id found
-      return null;
     });
 
     // perform recursive loop
@@ -74,10 +71,12 @@ class TreeBuilder<T extends BaseData> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _tree.length > 0 ? _tree : Container(),
-      ),
+      child: _tree!.length > 0
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _tree!,
+            )
+          : Container(),
       scrollDirection: Axis.vertical,
     );
   }
@@ -93,16 +92,16 @@ class ParentWidget extends StatefulWidget {
   // final Function onToggle;
 
   /// style configuration properties
-  final Color parentRowColor;
+  final Color? parentRowColor;
 
   ParentWidget({
-    @required this.parent,
-    @required this.children,
+    Key? key,
+    required this.parent,
+    required this.children,
     this.arrowIcon = Icons.keyboard_arrow_down,
     // this.shouldExpand = false,
     // this.onToggle,
     this.parentRowColor,
-    Key key,
   }) : super(key: key);
 
   @override
@@ -112,8 +111,8 @@ class ParentWidget extends StatefulWidget {
 class _ParentWidgetState extends State<ParentWidget>
     with SingleTickerProviderStateMixin {
   bool shouldExpand = false;
-  Animation<double> sizeAnimation;
-  AnimationController expandController;
+  Animation<double>? sizeAnimation;
+  AnimationController? expandController;
 
   @override
   void initState() {
@@ -133,7 +132,7 @@ class _ParentWidgetState extends State<ParentWidget>
   @override
   void dispose() {
     super.dispose();
-    expandController.dispose();
+    expandController!.dispose();
   }
 
   void prepareAnimation() {
@@ -143,8 +142,8 @@ class _ParentWidgetState extends State<ParentWidget>
         milliseconds: 300,
       ),
     );
-    Animation curve = CurvedAnimation(
-      parent: expandController,
+    Animation<double> curve = CurvedAnimation(
+      parent: expandController!,
       curve: Curves.fastOutSlowIn,
     );
     sizeAnimation = Tween(
@@ -173,13 +172,13 @@ class _ParentWidgetState extends State<ParentWidget>
                     shouldExpand = !shouldExpand;
                   });
                   if (shouldExpand) {
-                    expandController.forward();
+                    expandController!.forward();
                   } else {
-                    expandController.reverse();
+                    expandController!.reverse();
                   }
                 },
                 icon: RotationTransition(
-                  turns: sizeAnimation,
+                  turns: sizeAnimation!,
                   child: Icon(
                     widget.arrowIcon,
                   ),
@@ -208,7 +207,7 @@ class ChildWidget extends StatefulWidget {
   final bool shouldExpand;
 
   ChildWidget({
-    this.children,
+    required this.children,
     this.shouldExpand = false,
   });
 
@@ -218,16 +217,16 @@ class ChildWidget extends StatefulWidget {
 
 class _ChildWidgetState extends State<ChildWidget>
     with SingleTickerProviderStateMixin {
-  Animation<double> sizeAnimation;
-  AnimationController expandController;
+  Animation<double>? sizeAnimation;
+  AnimationController? expandController;
 
   @override
   void didUpdateWidget(ChildWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.shouldExpand) {
-      expandController.forward();
+      expandController!.forward();
     } else {
-      expandController.reverse();
+      expandController!.reverse();
     }
   }
 
@@ -240,7 +239,7 @@ class _ChildWidgetState extends State<ChildWidget>
   @override
   void dispose() {
     super.dispose();
-    expandController.dispose();
+    expandController!.dispose();
   }
 
   void prepareAnimation() {
@@ -248,8 +247,8 @@ class _ChildWidgetState extends State<ChildWidget>
       vsync: this,
       duration: Duration(milliseconds: 300),
     );
-    Animation curve = CurvedAnimation(
-      parent: expandController,
+    Animation<double> curve = CurvedAnimation(
+      parent: expandController!,
       curve: Curves.fastOutSlowIn,
     );
     sizeAnimation = Tween(
@@ -264,7 +263,7 @@ class _ChildWidgetState extends State<ChildWidget>
   @override
   Widget build(BuildContext context) {
     return SizeTransition(
-      sizeFactor: sizeAnimation,
+      sizeFactor: sizeAnimation!,
       axisAlignment: -1.0,
       child: Column(
         children: widget.children,

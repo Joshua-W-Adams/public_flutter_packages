@@ -1,5 +1,14 @@
 part of treebuilder;
 
+extension FirstWhereOrNullExtension<E> on Iterable<E> {
+  E? firstWhereOrNull(bool Function(E) test) {
+    for (E element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
+
 /// [TreeBuilder] will construct treeview based on parent-child relationship.
 /// Therefore all data arrays passed to the tree builder must implement this
 /// interface
@@ -8,7 +17,7 @@ abstract class BaseData {
   String getId();
 
   /// parentId of a child
-  String getParentId();
+  String? getParentId();
 }
 
 /// controls all business logic for the [TreeBuilder]
@@ -18,19 +27,20 @@ abstract class TreeBuilderModel {
 
   // ************************ Public APIs ************************
   static List<T> getDirectChildrenFromParent<T extends BaseData>({
-    List<T> data,
-    String parentId,
+    required List<T> data,
+    required String? parentId,
   }) {
     parentId = parentId == null ? "" : parentId.toString();
     return data.where((row) {
-      String rowParentId = row.getParentId() == null ? "" : row.getParentId();
+      String? rowParentId = row.getParentId();
+      rowParentId = rowParentId ?? "";
       return rowParentId == parentId;
     }).toList();
   }
 
   static List<T> getAllChildrenFromParents<T extends BaseData>({
-    List<T> parents,
-    List<T> data,
+    required List<T> parents,
+    required List<T> data,
   }) {
     List<T> depthData = [];
     parents.forEach(
@@ -80,32 +90,34 @@ abstract class TreeBuilderModel {
   /// under each parent.
   static void recursiveParentChildLoop<T extends BaseData>({
     /// direct parent node of depth data
-    T parent,
+    T? parent,
 
     /// current depth data to perform recursive loop from
-    List<T> depthData,
+    required List<T> depthData,
 
     /// all parent child data
-    List<T> data,
+    required List<T> data,
 
     /// current depth in tree
     int depth = 0,
 
     /// child node encountered
-    void Function(T child, T parent, int depth) onChild,
+    required void Function(T child, T? parent, int depth) onChild,
 
     /// parent node encountered on the way DOWN the data tree (i.e. before the
     /// children are processed)
-    void Function(T parent, T parentParent, List<T> children, int depth)
+    required void Function(
+            T parent, T? parentParent, List<T> children, int depth)
         onParentDown,
 
     /// parent node encountered on the way UP the data tree (i.e. after the
     /// children are processed)
-    void Function(T parent, T parentParent, List<T> children, int depth)
+    required void Function(
+            T parent, T? parentParent, List<T> children, int depth)
         onParentUp,
 
     /// current depth data processing complete
-    void Function(T parent, int depth) onEndOfDepth,
+    void Function(T? parent, int depth)? onEndOfDepth,
   }) {
     /// loop through nodes at current depth
     depthData.forEach((node) {
@@ -142,15 +154,13 @@ abstract class TreeBuilderModel {
     });
 
     /// nodes completed processing
-    if (onEndOfDepth != null) {
-      onEndOfDepth(parent, depth);
-    }
+    onEndOfDepth?.call(parent, depth);
   }
 
   static List<Widget> addToArray<T extends BaseData>(
-    Map<T, List<Widget>> tree,
+    Map<T?, List<Widget>> tree,
     Widget item,
-    T parent,
+    T? parent,
   ) {
     List<Widget> children;
 
@@ -158,7 +168,7 @@ abstract class TreeBuilderModel {
     if (tree[parent] == null) {
       children = [];
     } else {
-      children = tree[parent];
+      children = tree[parent]!;
     }
 
     /// add item to array
@@ -170,18 +180,23 @@ abstract class TreeBuilderModel {
   /// [buildWidgetTree] is a wrapper to the [_recursiveParentChildLoop] function
   /// that the ability to construct a widget tree from the loop.
   static List<Widget> buildWidgetTree<T extends BaseData>({
-    T parent,
-    List<T> depthData,
-    List<T> data,
+    T? parent,
+    required List<T> depthData,
+    required List<T> data,
     int depth = 0,
-    Widget Function(T child, T parent, int depth) onChild,
-    Widget Function(T parent, T parentParent, List<T> children, int depth,
-            List<Widget> childrenWidgets)
+    required Widget Function(T child, T? parent, int depth) onChild,
+    required Widget Function(
+      T parent,
+      T? parentParent,
+      List<T> children,
+      int depth,
+      List<Widget> childrenWidgets,
+    )
         onParentUp,
-    Widget Function(T parent, int depth) onEndOfDepth,
+    required Widget Function(T? parent, int depth) onEndOfDepth,
   }) {
     /// create widget array for storing generated tree
-    Map<T, List<Widget>> tree = Map<T, List<Widget>>();
+    Map<T?, List<Widget>> tree = Map<T?, List<Widget>>();
 
     /// perform recursive loop to generate tree
     recursiveParentChildLoop<T>(
@@ -189,7 +204,7 @@ abstract class TreeBuilderModel {
       depthData: depthData,
       data: data,
       depth: depth,
-      onChild: (T child, T parent, int depth) {
+      onChild: (T child, T? parent, int depth) {
         /// generate widget
         Widget cWidget = onChild(child, parent, depth);
 
@@ -199,9 +214,9 @@ abstract class TreeBuilderModel {
 
       /// unused - pass function to prevent missing callback errors
       onParentDown: (_, __, ___, ____) {},
-      onParentUp: (T parent, T parentParent, List<T> children, int depth) {
+      onParentUp: (T parent, T? parentParent, List<T> children, int depth) {
         /// get children
-        List<Widget> cWidgets = tree[parent];
+        List<Widget> cWidgets = tree[parent]!;
 
         /// generate widget
         Widget pWidget =
@@ -210,7 +225,7 @@ abstract class TreeBuilderModel {
         /// store widget
         tree[parentParent] = addToArray<T>(tree, pWidget, parentParent);
       },
-      onEndOfDepth: (T parent, int depth) {
+      onEndOfDepth: (T? parent, int depth) {
         /// generate widget
         Widget endWidget = onEndOfDepth(parent, depth);
 
@@ -219,7 +234,7 @@ abstract class TreeBuilderModel {
       },
     );
 
-    return tree[parent];
+    return tree[parent]!;
 
     /// Old recursive loop logic
     //   List<Widget> depthWidgets = [];
@@ -260,13 +275,13 @@ abstract class TreeBuilderModel {
 
   static void recursiveParentLookupLoop<T extends BaseData>({
     /// direct parent node of depth data
-    T node,
+    required T node,
 
     /// all parent child data
-    List<T> data,
+    required List<T> data,
 
     /// child node encountered
-    void Function(T child, T parent) onParent,
+    required void Function(T child, T parent) onParent,
   }) {
     if (node.getParentId() != null) {
       // case 1 - any node besides root node
