@@ -12,12 +12,12 @@ abstract class BaseData {
 }
 
 /// controls all business logic for the [TreeBuilder]
-class TreeBuilderModel {
+abstract class TreeBuilderModel {
   // ************************ Private Functions ************************
   // N/A
 
   // ************************ Public APIs ************************
-  List<T> getDirectChildrenFromParent<T extends BaseData>({
+  static List<T> getDirectChildrenFromParent<T extends BaseData>({
     List<T> data,
     String parentId,
   }) {
@@ -28,7 +28,7 @@ class TreeBuilderModel {
     }).toList();
   }
 
-  List<T> getAllChildrenFromParents<T extends BaseData>({
+  static List<T> getAllChildrenFromParents<T extends BaseData>({
     List<T> parents,
     List<T> data,
   }) {
@@ -78,7 +78,7 @@ class TreeBuilderModel {
   /// structure starting at the top node (or root) and go down for each parent
   /// (P) and to the right for each child (C or P). Then up for the last node
   /// under each parent.
-  void recursiveParentChildLoop<T extends BaseData>({
+  static void recursiveParentChildLoop<T extends BaseData>({
     /// direct parent node of depth data
     T parent,
 
@@ -147,7 +147,7 @@ class TreeBuilderModel {
     }
   }
 
-  List<Widget> _addToArray<T extends BaseData>(
+  static List<Widget> addToArray<T extends BaseData>(
     Map<T, List<Widget>> tree,
     Widget item,
     T parent,
@@ -169,7 +169,7 @@ class TreeBuilderModel {
 
   /// [buildWidgetTree] is a wrapper to the [_recursiveParentChildLoop] function
   /// that the ability to construct a widget tree from the loop.
-  List<Widget> buildWidgetTree<T extends BaseData>({
+  static List<Widget> buildWidgetTree<T extends BaseData>({
     T parent,
     List<T> depthData,
     List<T> data,
@@ -194,7 +194,7 @@ class TreeBuilderModel {
         Widget cWidget = onChild(child, parent, depth);
 
         /// store widget in current depth array
-        tree[parent] = _addToArray<T>(tree, cWidget, parent);
+        tree[parent] = addToArray<T>(tree, cWidget, parent);
       },
 
       /// unused - pass function to prevent missing callback errors
@@ -208,14 +208,14 @@ class TreeBuilderModel {
             onParentUp(parent, parentParent, children, depth, cWidgets);
 
         /// store widget
-        tree[parentParent] = _addToArray<T>(tree, pWidget, parentParent);
+        tree[parentParent] = addToArray<T>(tree, pWidget, parentParent);
       },
       onEndOfDepth: (T parent, int depth) {
         /// generate widget
         Widget endWidget = onEndOfDepth(parent, depth);
 
         /// store widget
-        tree[parent] = _addToArray<T>(tree, endWidget, parent);
+        tree[parent] = addToArray<T>(tree, endWidget, parent);
       },
     );
 
@@ -258,7 +258,7 @@ class TreeBuilderModel {
     //   return depthWidgets;
   }
 
-  void recursiveParentLookupLoop<T extends BaseData>({
+  static void recursiveParentLookupLoop<T extends BaseData>({
     /// direct parent node of depth data
     T node,
 

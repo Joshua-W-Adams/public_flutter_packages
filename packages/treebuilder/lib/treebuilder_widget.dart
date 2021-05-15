@@ -46,10 +46,11 @@ class TreeBuilder<T extends BaseData> extends StatelessWidget {
   }
 
   List<Widget> _buildTree() {
-    TreeBuilderModel model = TreeBuilderModel();
     // get all root data to start from
-    List<T> roots =
-        model.getDirectChildrenFromParent(data: data, parentId: buildFromId);
+    List<T> roots = TreeBuilderModel.getDirectChildrenFromParent(
+      data: data,
+      parentId: buildFromId,
+    );
 
     /// get parent data
     T parent = data.firstWhere((element) {
@@ -60,7 +61,7 @@ class TreeBuilder<T extends BaseData> extends StatelessWidget {
     });
 
     // perform recursive loop
-    return model.buildWidgetTree<T>(
+    return TreeBuilderModel.buildWidgetTree<T>(
       parent: parent,
       depthData: roots,
       data: data,
