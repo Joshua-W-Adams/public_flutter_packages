@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:treebuilder/treebuilder.dart';
+import 'app/synced_tree/synced_tree.dart';
+import 'app/tree/tree.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,114 +16,43 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Sample Tree App'),
         ),
-        body: Tree(),
+        body: Column(
+          children: [
+            TreeHeading(text: 'Standard Tree'),
+            Tree(),
+            SizedBox(
+              height: 50,
+            ),
+            TreeHeading(text: 'Synced Tree'),
+            SyncedTree(),
+          ],
+        ),
       ),
     );
   }
 }
 
-List<BaseData> _getData() {
-  return [
-    SampleBaseData(
-      id: '1',
-      parentId: null,
-      name: 'root',
-    ),
-    SampleBaseData(
-      id: '2',
-      parentId: '1',
-      name: 'L1 child',
-    ),
-    SampleBaseData(
-      id: '3',
-      parentId: '1',
-      name: 'L1 parent',
-    ),
-    SampleBaseData(
-      id: '4',
-      parentId: '3',
-      name: 'L2 child',
-    ),
-    SampleBaseData(
-      id: '5',
-      parentId: '3',
-      name: 'L2 parent',
-    ),
-    SampleBaseData(
-      id: '6',
-      parentId: '5',
-      name: 'L3 child',
-    ),
-    SampleBaseData(
-      id: '7',
-      parentId: '1',
-      name: 'L1 parent',
-    ),
-    SampleBaseData(
-      id: '8',
-      parentId: '7',
-      name: 'L2 child',
-    ),
-  ];
-}
+class TreeHeading extends StatelessWidget {
+  final String text;
+  TreeHeading({this.text});
 
-class Tree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return TreeBuilder(
-      data: _getData(),
-      childBuilder: (child, parent, depth) {
-        SampleBaseData c = child;
-        return Row(
-          children: [
-            SizedBox(width: 50),
-            Expanded(
-              child: Text('${c.name}'),
+    ThemeData theme = Theme.of(context);
+    TextStyle headingStyle = theme.textTheme.headline6;
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            color: Colors.grey[300],
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              text,
+              style: headingStyle,
             ),
-          ],
-        );
-      },
-      parentBuilder: (parent, _, __, depth, childrenWidgets) {
-        SampleBaseData p = parent;
-        return ParentWidget(
-          parent: Text('${p.name}'),
-          parentRowColor: depth == 0 ? Colors.lightBlue : null,
-          children: childrenWidgets,
-          arrowIcon: Icons.keyboard_arrow_down,
-        );
-      },
-      endOfDepthBuilder: (parent, depth) {
-        return Row(
-          children: [
-            SizedBox(width: 50),
-            Expanded(
-              child: Text('end of depth: $depth'),
-            ),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
     );
-  }
-}
-
-class SampleBaseData extends BaseData {
-  final String id;
-  final String parentId;
-  final String name;
-
-  SampleBaseData({
-    this.id,
-    this.parentId,
-    this.name,
-  });
-
-  @override
-  String getId() {
-    return id;
-  }
-
-  @override
-  String getParentId() {
-    return parentId;
   }
 }
