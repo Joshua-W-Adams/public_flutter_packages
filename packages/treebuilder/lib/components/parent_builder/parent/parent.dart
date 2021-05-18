@@ -13,8 +13,17 @@ class ParentWidget extends StatefulWidget {
   /// status
   final List<Widget> children;
 
+  /// widget to be placed infront of the parent and icon widgets
+  final Widget? leading;
+
+  /// widget to be placed behind the parent and icon widgets
+  final Widget? trailing;
+
   /// icon to display to the left of the parent widget
   final Icon? icon;
+
+  /// whether to display the icon before or after the parent widget
+  final bool iconLeading;
 
   /// Color of the parent widget only. includes the icon row color.
   final Color? parentRowColor;
@@ -27,7 +36,10 @@ class ParentWidget extends StatefulWidget {
     required this.expanded,
     required this.parent,
     required this.children,
+    this.leading,
+    this.trailing,
     this.icon = const Icon(Icons.keyboard_arrow_down),
+    this.iconLeading = true,
     this.parentRowColor,
     this.onPressed,
   }) : super(key: key);
@@ -80,24 +92,30 @@ class _ParentWidgetState extends State<ParentWidget>
       expandController!.reverse();
     }
 
+    Widget icon = widget.icon != null
+        ? IconButton(
+            onPressed: widget.onPressed,
+            icon: RotationTransition(
+              turns: sizeAnimation!,
+              child: widget.icon,
+            ),
+          )
+        : Container();
+
+    List<Widget> parentWidgets = [
+      if (widget.leading != null) ...[widget.leading!],
+      if (widget.iconLeading == true) ...[icon],
+      widget.parent,
+      if (widget.iconLeading == false) ...[icon],
+      if (widget.trailing != null) ...[widget.trailing!]
+    ];
+
     return Column(
       children: [
         Container(
           color: widget.parentRowColor,
           child: Row(
-            children: [
-              widget.icon != null
-                  ? IconButton(
-                      onPressed: widget.onPressed,
-                      icon: RotationTransition(
-                        turns: sizeAnimation!,
-                        child: widget.icon,
-                      ),
-                    )
-                  : Container(),
-              // parent widget builder executed here
-              widget.parent,
-            ],
+            children: parentWidgets,
           ),
         ),
         ChildWidget(
