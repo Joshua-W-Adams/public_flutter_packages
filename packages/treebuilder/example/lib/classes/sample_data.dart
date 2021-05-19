@@ -1,11 +1,11 @@
 import 'package:treebuilder/treebuilder.dart';
 
-class SampleBaseData extends BaseData {
+class SampleData extends IUniqueParentChildRow {
   final String id;
   final String parentId;
   final String name;
 
-  SampleBaseData({
+  SampleData({
     this.id,
     this.parentId,
     this.name,

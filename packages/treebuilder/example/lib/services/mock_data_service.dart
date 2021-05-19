@@ -1,45 +1,45 @@
-import 'package:example/classes/sample_base_data.dart';
+import 'package:example/classes/sample_data.dart';
 import 'package:treebuilder/treebuilder.dart';
 
 abstract class MockDataService {
-  static List<BaseData> getData() {
+  static List<IUniqueParentChildRow> getData() {
     return [
-      SampleBaseData(
+      SampleData(
         id: '1',
         parentId: null,
         name: 'root',
       ),
-      SampleBaseData(
+      SampleData(
         id: '2',
         parentId: '1',
         name: 'L1 child',
       ),
-      SampleBaseData(
+      SampleData(
         id: '3',
         parentId: '1',
         name: 'L1 parent',
       ),
-      SampleBaseData(
+      SampleData(
         id: '4',
         parentId: '3',
         name: 'L2 child',
       ),
-      SampleBaseData(
+      SampleData(
         id: '5',
         parentId: '3',
         name: 'L2 parent',
       ),
-      SampleBaseData(
+      SampleData(
         id: '6',
         parentId: '5',
         name: 'L3 child',
       ),
-      SampleBaseData(
+      SampleData(
         id: '7',
         parentId: '1',
         name: 'L1 parent',
       ),
-      SampleBaseData(
+      SampleData(
         id: '8',
         parentId: '7',
         name: 'L2 child',

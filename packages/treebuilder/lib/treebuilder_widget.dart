@@ -2,9 +2,9 @@ part of treebuilder;
 
 /// A tree view that supports indefinite parent/child datastructures with
 /// passable widget builder for parent, child and last row in depth.
-class TreeBuilder<T extends BaseData> extends StatelessWidget {
+class TreeBuilder<T extends IUniqueParentChildRow> extends StatelessWidget {
   /// TreeBuilder will be constructed based on this parent child data array.
-  /// Create a model class and implement [BaseData]
+  /// Create a model class and implement [IUniqueParentChildRow]
   final List<T> data;
 
   /// widget builder functions that are called for parent and child items

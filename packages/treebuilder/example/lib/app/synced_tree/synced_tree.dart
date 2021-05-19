@@ -1,4 +1,4 @@
-import 'package:example/classes/sample_base_data.dart';
+import 'package:example/classes/sample_data.dart';
 import 'package:example/services/mock_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:treebuilder/treebuilder.dart';
@@ -25,7 +25,7 @@ class _SyncedTreeState extends State<SyncedTree> {
   }
 
   Widget childBuilder(child, parent, depth) {
-    SampleBaseData c = child;
+    SampleData c = child;
     return Row(
       children: [
         SizedBox(width: 50),
@@ -37,7 +37,7 @@ class _SyncedTreeState extends State<SyncedTree> {
   }
 
   Widget parentBuilder(parent, _, __, depth, childrenWidgets) {
-    SampleBaseData p = parent;
+    SampleData p = parent;
     ParentBloc parentBloc = ParentBloc(expanded: true);
     parentBlocs[parent] = parentBloc;
 
@@ -70,7 +70,7 @@ class _SyncedTreeState extends State<SyncedTree> {
   }
 
   Widget syncedParentBuilder(parent, _, __, depth, childrenWidgets) {
-    SampleBaseData p = parent;
+    SampleData p = parent;
     ParentBloc parentBloc = parentBlocs[parent];
     return ParentBuilder(
       stream: parentBloc.syncStream,
@@ -92,7 +92,7 @@ class _SyncedTreeState extends State<SyncedTree> {
   @override
   Widget build(BuildContext context) {
     _disposeParentBlocs();
-    List<BaseData> data = MockDataService.getData();
+    List<IUniqueParentChildRow> data = MockDataService.getData();
     return Row(
       children: [
         Expanded(

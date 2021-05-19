@@ -9,13 +9,15 @@ extension FirstWhereOrNullExtension<E> on Iterable<E> {
   }
 }
 
+abstract class IUniqueRow {
+  /// id of this data
+  String getId();
+}
+
 /// [TreeBuilder] will construct treeview based on parent-child relationship.
 /// Therefore all data arrays passed to the tree builder must implement this
 /// interface
-abstract class BaseData {
-  /// id of this data
-  String getId();
-
+abstract class IUniqueParentChildRow extends IUniqueRow {
   /// parentId of a child
   String? getParentId();
 }
@@ -26,7 +28,7 @@ abstract class TreeBuilderModel {
   // N/A
 
   // ************************ Public APIs ************************
-  static List<T> getDirectChildrenFromParent<T extends BaseData>({
+  static List<T> getDirectChildrenFromParent<T extends IUniqueParentChildRow>({
     required List<T> data,
     required String? parentId,
   }) {
@@ -38,7 +40,7 @@ abstract class TreeBuilderModel {
     }).toList();
   }
 
-  static List<T> getAllChildrenFromParents<T extends BaseData>({
+  static List<T> getAllChildrenFromParents<T extends IUniqueParentChildRow>({
     required List<T> parents,
     required List<T> data,
   }) {
@@ -88,7 +90,7 @@ abstract class TreeBuilderModel {
   /// structure starting at the top node (or root) and go down for each parent
   /// (P) and to the right for each child (C or P). Then up for the last node
   /// under each parent.
-  static void recursiveParentChildLoop<T extends BaseData>({
+  static void recursiveParentChildLoop<T extends IUniqueParentChildRow>({
     /// direct parent node of depth data
     T? parent,
 
@@ -157,7 +159,7 @@ abstract class TreeBuilderModel {
     onEndOfDepth?.call(parent, depth);
   }
 
-  static List<Widget> addToArray<T extends BaseData>(
+  static List<Widget> addToArray<T extends IUniqueParentChildRow>(
     Map<T?, List<Widget>> tree,
     Widget item,
     T? parent,
@@ -179,7 +181,7 @@ abstract class TreeBuilderModel {
 
   /// [buildWidgetTree] is a wrapper to the [_recursiveParentChildLoop] function
   /// that the ability to construct a widget tree from the loop.
-  static List<Widget> buildWidgetTree<T extends BaseData>({
+  static List<Widget> buildWidgetTree<T extends IUniqueParentChildRow>({
     T? parent,
     required List<T> depthData,
     required List<T> data,
@@ -273,7 +275,7 @@ abstract class TreeBuilderModel {
     //   return depthWidgets;
   }
 
-  static void recursiveParentLookupLoop<T extends BaseData>({
+  static void recursiveParentLookupLoop<T extends IUniqueParentChildRow>({
     /// direct parent node of depth data
     required T node,
 
