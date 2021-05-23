@@ -19,7 +19,7 @@ class ParentBuilder extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           /// case 1 - awaiting connection
           return Center(
-            child: CircularProgressIndicator(),
+            child: Container(),
           );
         } else if (snapshot.hasError) {
           /// case 2 - error in snapshot
