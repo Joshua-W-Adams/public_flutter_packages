@@ -3,6 +3,7 @@ library treebuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:async';
+import 'package:rxdart/subjects.dart';
 
 part 'components/parent_builder/parent/child/child.dart';
 part 'components/parent_builder/parent_bloc.dart';

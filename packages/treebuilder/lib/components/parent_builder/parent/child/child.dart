@@ -19,15 +19,12 @@ class _ChildWidgetState extends State<ChildWidget>
     with SingleTickerProviderStateMixin {
   Animation<double>? sizeAnimation;
   AnimationController? expandController;
+  bool? _shouldExpand;
 
   @override
   void didUpdateWidget(ChildWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.shouldExpand) {
-      expandController!.forward();
-    } else {
-      expandController!.reverse();
-    }
+    _runAnimation();
   }
 
   @override
@@ -58,6 +55,19 @@ class _ChildWidgetState extends State<ChildWidget>
       ..addListener(() {
         setState(() {});
       });
+  }
+
+  void _runAnimation() {
+    /// only run animation if the expanded status has changed
+    if (_shouldExpand != widget.shouldExpand) {
+      /// run the animation based on the provided expanded status
+      if (widget.shouldExpand) {
+        expandController!.forward();
+      } else {
+        expandController!.reverse();
+      }
+    }
+    _shouldExpand = widget.shouldExpand;
   }
 
   @override

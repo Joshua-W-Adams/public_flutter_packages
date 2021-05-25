@@ -73,7 +73,7 @@ class _SyncedTreeState extends State<SyncedTree> {
     SampleData p = parent;
     ParentBloc parentBloc = parentBlocs[parent];
     return ParentBuilder(
-      stream: parentBloc.syncStream,
+      stream: parentBloc.stream,
       builder: (expanded) {
         return ParentWidget(
           parent: Text('${p.name}'),

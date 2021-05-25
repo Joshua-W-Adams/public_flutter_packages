@@ -7,28 +7,20 @@ class ParentBloc {
   ParentBloc({this.expanded = false}) {
     /// initalise stream
     _controller.sink.add(expanded);
-    _syncController.sink.add(expanded);
   }
 
-  StreamController<bool> _controller = StreamController();
-  StreamController<bool> _syncController = StreamController();
+  StreamController<bool> _controller = BehaviorSubject();
 
   Stream<bool> get stream {
     return _controller.stream;
   }
 
-  Stream<bool> get syncStream {
-    return _syncController.stream;
-  }
-
   void setExpanded(bool expanded) {
     this.expanded = expanded;
     _controller.sink.add(expanded);
-    _syncController.sink.add(expanded);
   }
 
   void dispose() {
     _controller.close();
-    _syncController.close();
   }
 }

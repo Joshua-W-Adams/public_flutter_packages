@@ -52,6 +52,7 @@ class _ParentWidgetState extends State<ParentWidget>
     with SingleTickerProviderStateMixin {
   Animation<double>? sizeAnimation;
   AnimationController? expandController;
+  bool? _expanded;
 
   @override
   void initState() {
@@ -83,15 +84,22 @@ class _ParentWidgetState extends State<ParentWidget>
     super.dispose();
   }
 
+  void _runAnimation() {
+    /// only run animation if the expanded status has changed
+    if (_expanded != widget.expanded) {
+      /// run the animation based on the provided expanded status
+      if (widget.expanded) {
+        expandController!.forward();
+      } else {
+        expandController!.reverse();
+      }
+      _expanded = widget.expanded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    /// run the animation based on the provided expanded status
-    if (widget.expanded) {
-      expandController!.forward();
-    } else {
-      expandController!.reverse();
-    }
-
+    _runAnimation();
     Widget icon = widget.icon != null
         ? IconButton(
             onPressed: widget.onPressed,
