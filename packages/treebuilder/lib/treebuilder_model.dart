@@ -104,34 +104,34 @@ abstract class TreeBuilderModel {
     int depth = 0,
 
     /// child node encountered
-    required void Function(
+    void Function(
       T child,
       T? parent,
       T? childPreviousSibling,
       int depth,
-    )
+    )?
         onChild,
 
     /// parent node encountered on the way DOWN the data tree (i.e. before the
     /// children are processed)
-    required void Function(
+    void Function(
       T parent,
       T? parentParent,
       T? parentPreviousSibling,
       List<T> children,
       int depth,
-    )
+    )?
         onParentDown,
 
     /// parent node encountered on the way UP the data tree (i.e. after the
     /// children are processed)
-    required void Function(
+    void Function(
       T parent,
       T? parentParent,
       T? parentPreviousSibling,
       List<T> children,
       int depth,
-    )
+    )?
         onParentUp,
 
     /// current depth data processing complete
@@ -160,12 +160,13 @@ abstract class TreeBuilderModel {
 
       if (nodeChildren.length == 0) {
         /// case 1 - no children
-        onChild(node, parent, nodePreviousSibling, depth);
+        onChild?.call(node, parent, nodePreviousSibling, depth);
       } else {
         /// case 2 - parent widget encountered
 
         /// perform operation before parents children are processed
-        onParentDown(node, parent, nodePreviousSibling, nodeChildren, depth);
+        onParentDown?.call(
+            node, parent, nodePreviousSibling, nodeChildren, depth);
 
         /// resursively call function for parent
         recursiveParentChildLoop(
@@ -180,7 +181,8 @@ abstract class TreeBuilderModel {
         );
 
         /// perform operation after parents children are processed
-        onParentUp(node, parent, nodePreviousSibling, nodeChildren, depth);
+        onParentUp?.call(
+            node, parent, nodePreviousSibling, nodeChildren, depth);
       }
     }
 
@@ -248,9 +250,6 @@ abstract class TreeBuilderModel {
         /// store widget in current depth array
         tree[parent] = addToArray<T>(tree, cWidget, parent);
       },
-
-      /// unused - pass function to prevent missing callback errors
-      onParentDown: (_, __, ___, ____, _____) {},
       onParentUp: (
         T parent,
         T? parentParent,
