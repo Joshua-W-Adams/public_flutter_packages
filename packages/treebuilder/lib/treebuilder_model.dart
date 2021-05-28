@@ -104,25 +104,54 @@ abstract class TreeBuilderModel {
     int depth = 0,
 
     /// child node encountered
-    required void Function(T child, T? parent, int depth) onChild,
+    required void Function(
+      T child,
+      T? parent,
+      T? childPreviousSibling,
+      int depth,
+    )
+        onChild,
 
     /// parent node encountered on the way DOWN the data tree (i.e. before the
     /// children are processed)
     required void Function(
-            T parent, T? parentParent, List<T> children, int depth)
+      T parent,
+      T? parentParent,
+      T? parentPreviousSibling,
+      List<T> children,
+      int depth,
+    )
         onParentDown,
 
     /// parent node encountered on the way UP the data tree (i.e. after the
     /// children are processed)
     required void Function(
-            T parent, T? parentParent, List<T> children, int depth)
+      T parent,
+      T? parentParent,
+      T? parentPreviousSibling,
+      List<T> children,
+      int depth,
+    )
         onParentUp,
 
     /// current depth data processing complete
-    void Function(T? parent, int depth)? onEndOfDepth,
+    void Function(
+      T? parent,
+      T? childPreviousSibling,
+      int depth,
+    )?
+        onEndOfDepth,
   }) {
     /// loop through nodes at current depth
-    depthData.forEach((node) {
+    for (var n = 0; n < depthData.length; n++) {
+      T node = depthData[n];
+
+      T? nodePreviousSibling;
+      if (n != 0) {
+        /// previous sibling exists everywhere but position 0
+        nodePreviousSibling = depthData[n - 1];
+      }
+
       /// get all node children
       List<T> nodeChildren = getDirectChildrenFromParent<T>(
         data: data,
@@ -131,12 +160,12 @@ abstract class TreeBuilderModel {
 
       if (nodeChildren.length == 0) {
         /// case 1 - no children
-        onChild(node, parent, depth);
+        onChild(node, parent, nodePreviousSibling, depth);
       } else {
         /// case 2 - parent widget encountered
 
         /// perform operation before parents children are processed
-        onParentDown(node, parent, nodeChildren, depth);
+        onParentDown(node, parent, nodePreviousSibling, nodeChildren, depth);
 
         /// resursively call function for parent
         recursiveParentChildLoop(
@@ -151,12 +180,18 @@ abstract class TreeBuilderModel {
         );
 
         /// perform operation after parents children are processed
-        onParentUp(node, parent, nodeChildren, depth);
+        onParentUp(node, parent, nodePreviousSibling, nodeChildren, depth);
       }
-    });
+    }
+
+    /// get last node of current depth
+    T? lastNode;
+    if (depthData.length != 0) {
+      lastNode = depthData.last;
+    }
 
     /// nodes completed processing
-    onEndOfDepth?.call(parent, depth);
+    onEndOfDepth?.call(parent, lastNode, depth);
   }
 
   static List<Widget> addToArray<T extends IUniqueParentChildRow>(
@@ -206,7 +241,7 @@ abstract class TreeBuilderModel {
       depthData: depthData,
       data: data,
       depth: depth,
-      onChild: (T child, T? parent, int depth) {
+      onChild: (T child, T? parent, T? _, int depth) {
         /// generate widget
         Widget cWidget = onChild(child, parent, depth);
 
@@ -215,8 +250,14 @@ abstract class TreeBuilderModel {
       },
 
       /// unused - pass function to prevent missing callback errors
-      onParentDown: (_, __, ___, ____) {},
-      onParentUp: (T parent, T? parentParent, List<T> children, int depth) {
+      onParentDown: (_, __, ___, ____, _____) {},
+      onParentUp: (
+        T parent,
+        T? parentParent,
+        T? _,
+        List<T> children,
+        int depth,
+      ) {
         /// get children
         List<Widget> cWidgets = tree[parent]!;
 
@@ -227,7 +268,7 @@ abstract class TreeBuilderModel {
         /// store widget
         tree[parentParent] = addToArray<T>(tree, pWidget, parentParent);
       },
-      onEndOfDepth: (T? parent, int depth) {
+      onEndOfDepth: (T? parent, T? _, int depth) {
         /// generate widget
         Widget endWidget = onEndOfDepth(parent, depth);
 
