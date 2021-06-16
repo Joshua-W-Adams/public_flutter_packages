@@ -22,6 +22,12 @@ class ParentWidget extends StatefulWidget {
   /// icon to display to the left of the parent widget
   final Icon? icon;
 
+  /// defaults to [kMinInteractiveDimension]
+  final double? iconButtonWidth;
+
+  /// defaults to [kMinInteractiveDimension]
+  final double? iconButtonHeight;
+
   /// whether to display the icon before or after the parent widget
   final bool iconLeading;
 
@@ -39,6 +45,8 @@ class ParentWidget extends StatefulWidget {
     this.leading,
     this.trailing,
     this.icon = const Icon(Icons.keyboard_arrow_down),
+    this.iconButtonWidth = kMinInteractiveDimension,
+    this.iconButtonHeight = kMinInteractiveDimension,
     this.iconLeading = true,
     this.parentRowColor,
     this.onPressed,
@@ -101,11 +109,15 @@ class _ParentWidgetState extends State<ParentWidget>
   Widget build(BuildContext context) {
     _runAnimation();
     Widget icon = widget.icon != null
-        ? IconButton(
-            onPressed: widget.onPressed,
-            icon: RotationTransition(
-              turns: sizeAnimation!,
-              child: widget.icon,
+        ? SizedBox(
+            height: widget.iconButtonHeight,
+            width: widget.iconButtonWidth,
+            child: IconButton(
+              onPressed: widget.onPressed,
+              icon: RotationTransition(
+                turns: sizeAnimation!,
+                child: widget.icon,
+              ),
             ),
           )
         : Container();
