@@ -2,7 +2,6 @@ library firestore_service;
 
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 /// Base service to interface with firestore and standardise all requests
 class FirestoreService {
@@ -15,62 +14,62 @@ class FirestoreService {
 
   // ******************* Core Delete, Add and Edit Functions *******************
 
-  // base function to add a new or edit an existing document
+  /// add a new or edit an existing document
   Future<void> setData({
-    @required String path,
-    @required Map<String, dynamic> data,
+    required String path,
+    required Map<String, dynamic> data,
+    bool merge = false,
   }) async {
     final reference = FirebaseFirestore.instance.doc(path);
-    await reference.set(
-      data,
-    );
+    await reference.set(data, SetOptions(merge: merge));
   }
 
-  // base function to add a new item to a collection and auto assign a id
-  Future<T> addDocumentToCollection<T>({
-    @required String path,
-    @required Map<String, dynamic> data,
-    @required
-        T Function(
-                Map<String, dynamic> data, DocumentReference documentReference)
-            builder,
-  }) async {
-    final reference = FirebaseFirestore.instance.collection(path);
-    final DocumentReference doc = await reference.add(data);
-    return builder(data, doc);
-  }
-
-  // base function to delete a document
   Future<void> deleteData({
-    @required String path,
+    required String path,
   }) async {
     final reference = FirebaseFirestore.instance.doc(path);
     await reference.delete();
+  }
+
+  /// add a new item to a collection and auto assign a id
+  Future<T> addDocumentToCollection<T>({
+    required String path,
+    required Map<String, dynamic> data,
+    required T Function(
+      Map<String, dynamic> data,
+      DocumentReference documentReference,
+    )
+        builder,
+  }) async {
+    final reference = FirebaseFirestore.instance.collection(path);
+    final DocumentReference<Map<String, dynamic>> doc =
+        await reference.add(data);
+    return builder(data, doc);
   }
 
   // ******************* Core Read Functions *******************
 
   // ******************* Stream Functions *******************
 
-  // base collection stream function - creates a stream of a firestore
-  // collection and parses it to a new datatype with the builder function
+  /// creates a stream of a firestore collection and parses it to a new datatype
+  /// with the builder function
   Stream<List<T>> collectionStream<T>({
-    @required String path,
-    // parsing callback function. Attempts to parse the returned documents to a
-    // new datatype.
-    @required T Function(DocumentSnapshot doc) builder,
-    // passable firestore query extensions (.where etc.)
-    Query Function(Query query) queryBuilder,
-    int Function(T lhs, T rhs) sort,
+    required String path,
+    required T Function(Map<String, dynamic>? data, String documentID) builder,
+    Query<Map<String, dynamic>>? Function(Query<Map<String, dynamic>> query)?
+        queryBuilder,
+    int Function(T lhs, T rhs)? sort,
   }) {
-    Query query = FirebaseFirestore.instance.collection(path);
+    Query<Map<String, dynamic>> query =
+        FirebaseFirestore.instance.collection(path);
     if (queryBuilder != null) {
-      query = queryBuilder(query);
+      query = queryBuilder(query)!;
     }
-    final Stream<QuerySnapshot> snapshots = query.snapshots();
+    final Stream<QuerySnapshot<Map<String, dynamic>>> snapshots =
+        query.snapshots();
     return snapshots.map((snapshot) {
       final result = snapshot.docs
-          .map((snapshot) => builder(snapshot))
+          .map((snapshot) => builder(snapshot.data(), snapshot.id))
           .where((value) => value != null)
           .toList();
       if (sort != null) {
@@ -80,37 +79,38 @@ class FirestoreService {
     });
   }
 
-  // base function to return a stream of documents parsed to a new datatype with
-  // the builder function.
+  /// return a stream of documents parsed to a new datatype with the builder
+  /// function.
   Stream<T> documentStream<T>({
-    @required String path,
-    @required T Function(DocumentSnapshot doc) builder,
+    required String path,
+    required T Function(Map<String, dynamic>? data, String documentID) builder,
   }) {
-    final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-    final Stream<DocumentSnapshot> snapshots = reference.snapshots();
-    return snapshots.map((snapshot) => builder(snapshot));
+    final DocumentReference<Map<String, dynamic>> reference =
+        FirebaseFirestore.instance.doc(path);
+    final Stream<DocumentSnapshot<Map<String, dynamic>>> snapshots =
+        reference.snapshots();
+    return snapshots.map((snapshot) => builder(snapshot.data(), snapshot.id));
   }
 
   // ******************* Snapshot Functions *******************
 
-  // Creates a snapshot of a firestore collection and parses it to a new
-  // datatype with the builder function
+  /// Creates a snapshot of a firestore collection and parses it to a new
+  /// datatype with the builder function
   Future<List<T>> collectionSnapshot<T>({
-    @required String path,
-    // parsing callback function. Attempts to parse the returned documents to a
-    // new datatype.
-    @required T Function(DocumentSnapshot doc) builder,
-    // passable firestore query extensions (.where etc.)
-    Query Function(Query query) queryBuilder,
-    int Function(T lhs, T rhs) sort,
+    required String path,
+    required T Function(Map<String, dynamic>? data, String documentID) builder,
+    Query<Map<String, dynamic>>? Function(Query<Map<String, dynamic>> query)?
+        queryBuilder,
+    int Function(T lhs, T rhs)? sort,
   }) async {
-    Query query = FirebaseFirestore.instance.collection(path);
+    Query<Map<String, dynamic>> query =
+        FirebaseFirestore.instance.collection(path);
     if (queryBuilder != null) {
-      query = queryBuilder(query);
+      query = queryBuilder(query)!;
     }
-    final QuerySnapshot snapshot = await query.get();
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
     final result = snapshot.docs
-        .map((snapshot) => builder(snapshot))
+        .map((snapshot) => builder(snapshot.data(), snapshot.id))
         .where((value) => value != null)
         .toList();
     if (sort != null) {
@@ -119,14 +119,16 @@ class FirestoreService {
     return result;
   }
 
-  // Get a snapshot of a firestore document parsed to a new datatype with the
-  // builder function
+  /// Get a snapshot of a firestore document parsed to a new datatype with the
+  /// builder function
   Future<T> documentSnapshot<T>({
-    @required String path,
-    @required T Function(DocumentSnapshot doc) builder,
+    required String path,
+    required T Function(Map<String, dynamic>? data, String documentID) builder,
   }) async {
-    final DocumentReference reference = FirebaseFirestore.instance.doc(path);
-    final DocumentSnapshot snapshot = await reference.get();
-    return builder(snapshot);
+    final DocumentReference<Map<String, dynamic>> reference =
+        FirebaseFirestore.instance.doc(path);
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await reference.get();
+    return builder(snapshot.data(), snapshot.id);
   }
 }
