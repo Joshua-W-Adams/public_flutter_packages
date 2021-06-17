@@ -207,7 +207,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
           textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
         ),
         SizedBox(height: 16.0),
-        FlatButton(
+        TextButton(
           key: Key('secondary-button'),
           child: Text(bloc.secondaryButtonText),
           onPressed: bloc.isLoading
@@ -217,7 +217,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
                 },
         ),
         if (bloc.formType == EmailPasswordSignInFormType.signIn)
-          FlatButton(
+          TextButton(
             key: Key('tertiary-button'),
             child: Text('Forgot your password?'),
             onPressed: bloc.isLoading

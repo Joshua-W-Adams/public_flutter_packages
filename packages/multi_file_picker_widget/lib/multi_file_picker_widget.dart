@@ -129,7 +129,6 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
   }
 
   void _removeFile(int index) {
-    FileUploadModel fileUpload = _files[index];
     // replace file in current cache
     _files.removeAt(index);
     // send details top parent widget to allow handling of file operations

@@ -104,7 +104,7 @@ class _StepProcessExampleState extends State<StepProcessExample> {
       appBar: AppBar(
         title: Text('Onboarding'),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text(
               'Skip',
               style: TextStyle(

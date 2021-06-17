@@ -38,7 +38,7 @@ class FirebaseStorageService {
       // Url used to download file/image
       final downloadUrl = await uploadTask.ref.getDownloadURL();
       return downloadUrl;
-    } on FirebaseException catch (e) {
+    } on FirebaseException catch (_) {
       // e.g, e.code == 'canceled'
       rethrow;
     }

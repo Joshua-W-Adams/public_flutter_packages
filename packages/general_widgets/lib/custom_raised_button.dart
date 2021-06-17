@@ -35,22 +35,39 @@ class CustomRaisedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color borderColor =
+        Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5);
     return SizedBox(
       height: height,
-      child: RaisedButton(
+      child: ElevatedButton(
         child: loading ? buildSpinner(context) : child,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(borderRadius),
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(borderRadius),
+              ),
+              side: BorderSide(
+                color: borderColor,
+              ),
+            ),
           ),
-          side: BorderSide(
-            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
+          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+            (Set<MaterialState> states) {
+              if (states.contains(MaterialState.pressed))
+                return color;
+              else if (states.contains(MaterialState.disabled))
+                return disabledColor;
+              return null; // Use the component's default.
+            },
+          ),
+          elevation: MaterialStateProperty.all(0),
+          textStyle: MaterialStateProperty.all(
+            TextStyle(
+              color: textColor,
+            ),
           ),
         ),
-        color: color,
-        elevation: 0,
-        disabledColor: disabledColor,
-        textColor: textColor,
         onPressed: onPressed,
       ),
     );

@@ -18,13 +18,13 @@ Future<bool> showAlertDialog({
         content: Text(content),
         actions: <Widget>[
           if (cancelActionText != null)
-            FlatButton(
+            TextButton(
               child: Text(cancelActionText),
               onPressed: () {
                 return Navigator.of(context).pop(false);
               },
             ),
-          FlatButton(
+          TextButton(
             child: Text(defaultActionText),
             onPressed: () {
               if (onCloseCallback != null) {
