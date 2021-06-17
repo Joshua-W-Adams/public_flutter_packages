@@ -37,7 +37,7 @@ class FirestoreService {
     required Map<String, dynamic> data,
     required T Function(
       Map<String, dynamic> data,
-      DocumentReference documentReference,
+      DocumentReference<Map<String, dynamic>> documentReference,
     )
         builder,
   }) async {
