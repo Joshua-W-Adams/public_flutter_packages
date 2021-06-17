@@ -31,26 +31,16 @@ class FirebaseAuthService implements AuthService {
     // listen to the on auth state changed stream
     _firebaseAuth.authStateChanges().listen(
       (User user) async {
+        /// fires correctly on browser refresh when cache is cleared
         _authStream.add(user);
       },
     );
 
-    /// Currently the authStateChanges() function above is not correctly firing
-    /// events on browser refresh OR when a browser has an existing session token
-    /// refer to the issue below:
-    /// https://github.com/FirebaseExtended/flutterfire/issues/4348
-    /// To fix this issue we also need to listen on one of the streams below
-    /// and conditionally inject the user object into our application.
-    /// _firebaseAuth.userChanges()
-    /// _firebaseAuth.idTokenChanges()
     if (kIsWeb) {
-      _firebaseAuth.userChanges().listen((User user) {
-        /// confirm user object has not already been injected by
-        /// authStateChanges listener
-        if (_firebaseAuth.currentUser == null && user != null) {
-          _authStream.add(user);
-        }
-      });
+      /// handle scenario when a browser has an existing session token
+      if (_firebaseAuth.currentUser != null) {
+        _authStream.add(_firebaseAuth.currentUser);
+      }
     }
   }
 
