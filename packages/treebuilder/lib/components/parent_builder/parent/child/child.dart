@@ -35,8 +35,8 @@ class _ChildWidgetState extends State<ChildWidget>
 
   @override
   void dispose() {
-    super.dispose();
     expandController!.dispose();
+    super.dispose();
   }
 
   void prepareAnimation() {
