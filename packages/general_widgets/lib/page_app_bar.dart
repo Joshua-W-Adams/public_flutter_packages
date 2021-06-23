@@ -4,11 +4,11 @@ part of general_widgets;
 // allows widget to be used as a PreferredSizeWidget which is a requirement to be used as
 // a application bar.
 class PageAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final Key key;
+  final Key? key;
   final String title;
   final bool backButton;
-  final Function backButtonOnPressed;
-  final List<Widget> actions;
+  final Function? backButtonOnPressed;
+  final List<Widget>? actions;
 
   PageAppBar({
     this.key,
@@ -20,21 +20,19 @@ class PageAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void _defaultBackButtonOnPressed(BuildContext context) {
     // get current navigator state based on build context
-    final navigatorState = Navigator.of(context);
-    if (navigatorState != null) {
-      // pop state off route
-      navigatorState.pop();
-    }
+    final NavigatorState navigatorState = Navigator.of(context);
+    // pop state off route
+    navigatorState.pop();
   }
 
-  Widget _buildBackButton(BuildContext context) {
+  Widget? _buildBackButton(BuildContext context) {
     if (backButton != false) {
       return IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
           if (backButtonOnPressed != null) {
             // execute passed function
-            backButtonOnPressed();
+            backButtonOnPressed!();
           } else {
             // execute default navigator pop function
             _defaultBackButtonOnPressed(context);

@@ -1,9 +1,9 @@
 part of general_widgets;
 
 class Awaiting extends StatelessWidget {
-  final String headerText;
-  final String footerText;
-  final Function footerTextOnTap;
+  final String? headerText;
+  final String? footerText;
+  final Function? footerTextOnTap;
 
   Awaiting({
     this.headerText = 'Loading...',
@@ -59,7 +59,7 @@ class Awaiting extends StatelessWidget {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           if (footerTextOnTap != null) {
-                            footerTextOnTap();
+                            footerTextOnTap!();
                           }
                         },
                     ),

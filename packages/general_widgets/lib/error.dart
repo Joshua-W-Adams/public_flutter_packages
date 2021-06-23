@@ -3,11 +3,11 @@ part of general_widgets;
 /// Standardised widget to display errors to the user in a consistent format
 class ShowError extends StatelessWidget {
   final String error;
-  final String footerText;
-  final Function footerTextOnTap;
+  final String? footerText;
+  final Function? footerTextOnTap;
 
   ShowError({
-    @required this.error,
+    required this.error,
     this.footerText,
     this.footerTextOnTap,
   });
@@ -50,7 +50,7 @@ class ShowError extends StatelessWidget {
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
                               if (footerTextOnTap != null) {
-                                footerTextOnTap();
+                                footerTextOnTap!();
                               }
                             },
                         ),

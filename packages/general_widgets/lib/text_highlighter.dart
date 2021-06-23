@@ -4,20 +4,20 @@ part of general_widgets;
 /// a text string then return a [RichText] widget with any regular expression
 /// matches highlighted in the [highlightColor] specified.
 class TextHighlighter extends StatelessWidget {
-  final String text;
-  final RegExp query;
-  final TextStyle style;
-  final int maxLines;
+  final String? text;
+  final RegExp? query;
+  final TextStyle? style;
+  final int? maxLines;
   final TextOverflow overflow;
-  final Color baseColor;
-  final Color highlightColor;
-  final TextSpan prefixSpan;
-  final TextSpan suffixSpan;
-  final Function(String matchedText) matchOnTap;
+  final Color? baseColor;
+  final Color? highlightColor;
+  final TextSpan? prefixSpan;
+  final TextSpan? suffixSpan;
+  final Function(String matchedText)? matchOnTap;
 
   TextHighlighter({
-    @required this.text,
-    @required this.query,
+    required this.text,
+    required this.query,
     this.style,
     this.maxLines,
     this.overflow = TextOverflow.clip,
@@ -33,7 +33,7 @@ class TextHighlighter extends StatelessWidget {
     return _highlightAllText(text, query);
   }
 
-  TextSpan _getBaseTextSpan(String text) {
+  TextSpan _getBaseTextSpan(String? text) {
     return TextSpan(
       text: text,
       style: TextStyle(
@@ -52,19 +52,19 @@ class TextHighlighter extends StatelessWidget {
       recognizer: TapGestureRecognizer()
         ..onTap = () {
           if (matchOnTap != null) {
-            matchOnTap(text);
+            matchOnTap!(text);
           }
         },
     );
   }
 
-  Widget _highlightAllText(String text, RegExp query) {
+  Widget _highlightAllText(String? text, RegExp? query) {
     // array to store found text
     List<TextSpan> hightlightedText = [];
 
     // append a prefix if required - e.g. a username.
     if (prefixSpan != null) {
-      hightlightedText.add(prefixSpan);
+      hightlightedText.add(prefixSpan!);
     }
 
     // check user inputs for errors
@@ -82,7 +82,7 @@ class TextHighlighter extends StatelessWidget {
 
     // append suffix if required
     if (suffixSpan != null) {
-      hightlightedText.add(suffixSpan);
+      hightlightedText.add(suffixSpan!);
     }
 
     return RichText(
@@ -107,7 +107,7 @@ class TextHighlighter extends StatelessWidget {
       // check of string was found
       if (position != -1) {
         // get length of matched regualr expression
-        int matchLength = query.stringMatch(text.substring(position)).length;
+        int matchLength = query.stringMatch(text.substring(position))!.length;
         // create the segment (prefix and matched)
         segment = _getHighlightSegment(text, matchLength, query, i);
         // append segment to hightlight text array

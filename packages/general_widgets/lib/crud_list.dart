@@ -6,23 +6,23 @@ part of general_widgets;
 /// the [CrudList].
 class CrudListBuilder<T> extends StatelessWidget {
   final Stream<List<T>> stream;
-  final void Function(T selectedItem) onSelectCallback;
-  final void Function() addNewItemCallback;
-  final Future<void> Function(T deletedItem) deleteItemCallback;
-  final void Function() forInformationCallback;
+  final void Function(T selectedItem)? onSelectCallback;
+  final void Function()? addNewItemCallback;
+  final Future<void> Function(T deletedItem)? deleteItemCallback;
+  final void Function()? forInformationCallback;
   final SelectableListItem Function(T item) selectableListItemBuilder;
-  final String addNewItemText;
-  final String deleteItemText;
-  final String forInformationText;
+  final String? addNewItemText;
+  final String? deleteItemText;
+  final String? forInformationText;
 
   CrudListBuilder({
-    Key key,
-    @required this.stream,
+    Key? key,
+    required this.stream,
     this.onSelectCallback,
     this.addNewItemCallback,
     this.deleteItemCallback,
     this.forInformationCallback,
-    @required this.selectableListItemBuilder,
+    required this.selectableListItemBuilder,
     this.addNewItemText,
     this.deleteItemText,
     this.forInformationText,
@@ -36,7 +36,7 @@ class CrudListBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<List<T>>(
       stream: stream,
       builder: (_, _snapshot) {
         if (_snapshot.connectionState == ConnectionState.waiting) {
@@ -53,12 +53,15 @@ class CrudListBuilder<T> extends StatelessWidget {
         } else {
           // case 4 - data recieved - load crud list
           return CrudList<T>(
-            items: _snapshot.data,
+            items: _snapshot.data!,
             onSelectCallback: onSelectCallback,
             addNewItemCallback: addNewItemCallback,
             deleteItemCallback: deleteItemCallback,
             forInformationCallback: forInformationCallback,
             selectableListItemBuilder: selectableListItemBuilder,
+            addNewItemText: addNewItemText,
+            deleteItemText: deleteItemText,
+            forInformationText: forInformationText,
           );
         }
       },
@@ -71,23 +74,23 @@ class CrudListBuilder<T> extends StatelessWidget {
 /// callback functions.
 class CrudList<T> extends StatefulWidget {
   final List<T> items;
-  final void Function(T selectedItem) onSelectCallback;
-  final void Function() addNewItemCallback;
-  final Future<void> Function(T deletedItem) deleteItemCallback;
-  final void Function() forInformationCallback;
+  final void Function(T selectedItem)? onSelectCallback;
+  final void Function()? addNewItemCallback;
+  final Future<void> Function(T deletedItem)? deleteItemCallback;
+  final void Function()? forInformationCallback;
   final SelectableListItem Function(T item) selectableListItemBuilder;
-  final String addNewItemText;
-  final String deleteItemText;
-  final String forInformationText;
+  final String? addNewItemText;
+  final String? deleteItemText;
+  final String? forInformationText;
 
   CrudList({
-    Key key,
-    @required this.items,
+    Key? key,
+    required this.items,
     this.onSelectCallback,
     this.addNewItemCallback,
     this.deleteItemCallback,
     this.forInformationCallback,
-    @required this.selectableListItemBuilder,
+    required this.selectableListItemBuilder,
     this.addNewItemText = 'Add new item',
     this.deleteItemText = 'Delete item',
     this.forInformationText = 'More information',
@@ -98,8 +101,8 @@ class CrudList<T> extends StatefulWidget {
 }
 
 class _CrudListState<T> extends State<CrudList<T>> {
-  List<T> _items;
-  SelectableListItem _selectedItem;
+  late List<T> _items;
+  SelectableListItem? _selectedItem;
   bool _requestPending = false;
 
   @override
@@ -114,7 +117,7 @@ class _CrudListState<T> extends State<CrudList<T>> {
   // this widget by the parent stream builder we need to call the setState
   // method when the item list changes to force a rebuild of this widget.
   @override
-  void didUpdateWidget(CrudList oldWidget) {
+  void didUpdateWidget(CrudList<T> oldWidget) {
     // detected change to the item list
     if (_items != widget.items) {
       setState(() {
@@ -128,8 +131,8 @@ class _CrudListState<T> extends State<CrudList<T>> {
   /// Preventing users from performing additional requests while one is
   /// processing and also displaying success and error messages to the user.
   void _processRequest({
-    BuildContext context,
-    Future<void> requestFuture,
+    required BuildContext context,
+    required Future<void> requestFuture,
   }) {
     // check if request has already been issued to database
     if (!_requestPending) {
@@ -178,7 +181,7 @@ class _CrudListState<T> extends State<CrudList<T>> {
     // pending result of request. Do nothing.
   }
 
-  SelectableListItem _getSelectedItem(List<SelectableListItem> items) {
+  SelectableListItem? _getSelectedItem(List<SelectableListItem> items) {
     for (var i = 0; i < items.length; i++) {
       SelectableListItem item = items[i];
       if (item.selected == true) {
@@ -201,11 +204,9 @@ class _CrudListState<T> extends State<CrudList<T>> {
       multipleSelection: false,
       onSelectedCallback: (selectableItems) {
         setState(() {
-          _selectedItem = _getSelectedItem(selectableItems);
+          _selectedItem = _getSelectedItem(selectableItems!);
         });
-        if (widget.onSelectCallback != null) {
-          widget.onSelectCallback(_selectedItem?.extraData);
-        }
+        widget.onSelectCallback?.call(_selectedItem?.extraData);
       },
     );
   }
@@ -240,8 +241,8 @@ class _CrudListState<T> extends State<CrudList<T>> {
           : () {
               _processRequest(
                 context: context,
-                requestFuture: widget.deleteItemCallback(
-                  _selectedItem.extraData,
+                requestFuture: widget.deleteItemCallback!(
+                  _selectedItem!.extraData,
                 ),
               );
             },

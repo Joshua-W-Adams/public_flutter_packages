@@ -1,19 +1,19 @@
 part of general_widgets;
 
 class TermsAndConditions extends StatelessWidget {
-  final Function() termsOfUseCallback;
-  final Function() billingTermsCallback;
-  final Function() privacyPolicyCallback;
+  final Function()? termsOfUseCallback;
+  final Function()? billingTermsCallback;
+  final Function()? privacyPolicyCallback;
 
   TermsAndConditions({
-    @required this.termsOfUseCallback,
-    @required this.billingTermsCallback,
-    @required this.privacyPolicyCallback,
+    this.termsOfUseCallback,
+    this.billingTermsCallback,
+    this.privacyPolicyCallback,
   });
 
   TextStyle _getFooterTextStyle(ThemeData theme) {
     return TextStyle(
-      color: theme.textTheme.bodyText1.color.withOpacity(0.5),
+      color: theme.textTheme.bodyText1!.color!.withOpacity(0.5),
     );
   }
 
@@ -21,11 +21,11 @@ class TermsAndConditions extends StatelessWidget {
     return TextStyle(
       fontWeight: FontWeight.bold,
       decoration: TextDecoration.underline,
-      color: theme.textTheme.bodyText1.color.withOpacity(0.5),
+      color: theme.textTheme.bodyText1!.color!.withOpacity(0.5),
     );
   }
 
-  TextSpan _getTermsOfUse(ThemeData theme) {
+  TextSpan? _getTermsOfUse(ThemeData theme) {
     if (termsOfUseCallback == null) {
       return null;
     }
@@ -38,7 +38,7 @@ class TermsAndConditions extends StatelessWidget {
     );
   }
 
-  TextSpan _getBillingTerms(ThemeData theme) {
+  TextSpan? _getBillingTerms(ThemeData theme) {
     if (billingTermsCallback == null) {
       return null;
     }
@@ -49,7 +49,7 @@ class TermsAndConditions extends StatelessWidget {
     );
   }
 
-  TextSpan _getPrivacyPolicy(ThemeData theme) {
+  TextSpan? _getPrivacyPolicy(ThemeData theme) {
     if (privacyPolicyCallback == null) {
       return null;
     }
@@ -60,7 +60,7 @@ class TermsAndConditions extends StatelessWidget {
     );
   }
 
-  void _addTextSpan(List<TextSpan> textSpans, TextSpan textSpanToAdd) {
+  void _addTextSpan(List<TextSpan> textSpans, TextSpan? textSpanToAdd) {
     if (textSpanToAdd != null) {
       textSpans.add(textSpanToAdd);
     }

@@ -5,8 +5,8 @@ class UiStreamBuilder<T> extends StatelessWidget {
   final Widget Function(BuildContext, AsyncSnapshot<T>) builder;
 
   UiStreamBuilder({
-    @required this.stream,
-    @required this.builder,
+    required this.stream,
+    required this.builder,
   });
 
   @override

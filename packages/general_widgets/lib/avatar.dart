@@ -1,14 +1,14 @@
 part of general_widgets;
 
 class Avatar extends StatelessWidget {
-  final String photoUrl;
+  final String? photoUrl;
   final double radius;
-  final Color borderColor;
+  final Color? borderColor;
   final double borderWidth;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const Avatar({
-    @required this.photoUrl,
+    required this.photoUrl,
     this.radius = 50.0,
     this.borderColor,
     this.borderWidth = 1,
@@ -29,7 +29,7 @@ class Avatar extends StatelessWidget {
               image: photoUrl == null
                   ? null
                   : DecorationImage(
-                      image: NetworkImage(photoUrl),
+                      image: NetworkImage(photoUrl!),
                       fit: BoxFit.cover,
                     ),
             ),

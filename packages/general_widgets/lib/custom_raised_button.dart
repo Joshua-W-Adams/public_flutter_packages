@@ -3,17 +3,17 @@ part of general_widgets;
 @immutable
 class CustomRaisedButton extends StatelessWidget {
   final Widget child;
-  final Color color;
-  final Color disabledColor;
-  final Color textColor;
+  final Color? color;
+  final Color? disabledColor;
+  final Color? textColor;
   final double height;
   final double borderRadius;
   final bool loading;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CustomRaisedButton({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.color,
     this.disabledColor,
     this.textColor,
@@ -36,7 +36,7 @@ class CustomRaisedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color borderColor =
-        Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5);
+        Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.5);
     return SizedBox(
       height: height,
       child: ElevatedButton(
@@ -52,7 +52,7 @@ class CustomRaisedButton extends StatelessWidget {
               ),
             ),
           ),
-          backgroundColor: MaterialStateProperty.resolveWith<Color>(
+          backgroundColor: MaterialStateProperty.resolveWith<Color?>(
             (Set<MaterialState> states) {
               if (states.contains(MaterialState.pressed))
                 return color;

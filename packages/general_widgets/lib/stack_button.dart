@@ -2,13 +2,13 @@ part of general_widgets;
 
 class StackButton extends CustomRaisedButton {
   StackButton({
-    Key key,
-    @required String text,
-    @required VoidCallback onPressed,
-    Color textColor,
-    Color disabledColor,
+    Key? key,
+    required String text,
+    required VoidCallback? onPressed,
+    Color? textColor,
+    Color? disabledColor,
     double height = 50.0,
-    Widget child,
+    Widget? child,
   }) : super(
           key: key,
           child: Stack(

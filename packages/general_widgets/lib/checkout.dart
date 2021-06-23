@@ -8,26 +8,26 @@ class Checkout extends StatefulWidget {
   final String paymentMethodTitle;
   final String paymentMethodSubtitle;
   final String purchaseNotes;
-  final Future<void> Function() purchaseCallback;
-  final Future<void> Function(String discountCode) discountCallback;
+  final Future<void> Function()? purchaseCallback;
+  final Future<void> Function(String? discountCode)? discountCallback;
   final Function() termsOfUseCallback;
   final Function() privacyPolicyCallback;
   final Function() billingTermsCallback;
 
   Checkout({
-    Key key,
-    @required this.checkoutItemHeader,
-    @required this.checkoutItemTitle,
-    @required this.checkoutItemSubtitle,
-    @required this.paymentMethodHeader,
-    @required this.paymentMethodTitle,
-    @required this.paymentMethodSubtitle,
-    @required this.purchaseNotes,
-    @required this.purchaseCallback,
-    @required this.discountCallback,
-    @required this.termsOfUseCallback,
-    @required this.privacyPolicyCallback,
-    @required this.billingTermsCallback,
+    Key? key,
+    required this.checkoutItemHeader,
+    required this.checkoutItemTitle,
+    required this.checkoutItemSubtitle,
+    required this.paymentMethodHeader,
+    required this.paymentMethodTitle,
+    required this.paymentMethodSubtitle,
+    required this.purchaseNotes,
+    this.purchaseCallback,
+    this.discountCallback,
+    required this.termsOfUseCallback,
+    required this.privacyPolicyCallback,
+    required this.billingTermsCallback,
   }) : super(key: key);
 
   @override
@@ -36,15 +36,15 @@ class Checkout extends StatefulWidget {
 
 class _CheckoutState extends State<Checkout> {
   bool _requestPending = false;
-  String _discountCode;
+  String? _discountCode;
   GlobalKey<FormFieldState> _textFieldKey = GlobalKey();
 
   /// [_processRequest] is a generic ui function for handling server requests.
   /// Preventing users from performing additional requests while one is
   /// processing and also displaying success and error messages to the user.
   void _processRequest({
-    BuildContext context,
-    Future<void> requestFuture,
+    required BuildContext context,
+    required Future<void> requestFuture,
   }) {
     // check if request has already been issued to database
     if (!_requestPending) {
@@ -136,7 +136,7 @@ class _CheckoutState extends State<Checkout> {
         decoration: InputDecoration(
           labelText: 'Discount Code',
         ),
-        validator: (String value) {
+        validator: (String? value) {
           if (value == null || value.length == 0) {
             return 'Must provide a discount code';
           }
@@ -161,12 +161,12 @@ class _CheckoutState extends State<Checkout> {
             ? null
             : () {
                 // confirm discount code field is valid
-                bool valid = _textFieldKey.currentState.validate();
+                bool valid = _textFieldKey.currentState!.validate();
                 // send request to server if valid code and callback passed
                 if (valid && widget.discountCallback != null) {
                   _processRequest(
                     context: context,
-                    requestFuture: widget.discountCallback(_discountCode),
+                    requestFuture: widget.discountCallback!(_discountCode),
                   );
                 }
               },
@@ -225,7 +225,7 @@ class _CheckoutState extends State<Checkout> {
                   if (widget.purchaseCallback != null) {
                     _processRequest(
                       context: context,
-                      requestFuture: widget.purchaseCallback(),
+                      requestFuture: widget.purchaseCallback!(),
                     );
                   }
                 },

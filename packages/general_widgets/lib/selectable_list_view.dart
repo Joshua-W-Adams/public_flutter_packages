@@ -4,12 +4,12 @@ class SelectableListView<T> extends StatefulWidget {
   final List<T> list;
   final SelectableListItem Function(T item) selectableItemBuilder;
   final bool multipleSelection;
-  final Function(List<SelectableListItem> items) onSelectedCallback;
+  final Function(List<SelectableListItem>? items)? onSelectedCallback;
 
   SelectableListView({
-    Key key,
-    @required this.list,
-    @required this.selectableItemBuilder,
+    Key? key,
+    required this.list,
+    required this.selectableItemBuilder,
     this.multipleSelection = false,
     this.onSelectedCallback,
   }) : super(key: key);
@@ -18,10 +18,10 @@ class SelectableListView<T> extends StatefulWidget {
 }
 
 class _SelectableListViewState<T> extends State<SelectableListView<T>> {
-  bool _multipleSelection;
-  List<T> _list;
-  List<SelectableListItem> _selectableList;
-  Function(List<SelectableListItem> items) _onSelectedCallback;
+  late bool _multipleSelection;
+  late List<T> _list;
+  late List<SelectableListItem> _selectableList;
+  Function(List<SelectableListItem>? items)? _onSelectedCallback;
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _SelectableListViewState<T> extends State<SelectableListView<T>> {
   }
 
   @override
-  void didUpdateWidget(SelectableListView oldWidget) {
+  void didUpdateWidget(SelectableListView<T> oldWidget) {
     // check for change in underlying data model
     if (_list != widget.list) {
       setState(() {
@@ -77,8 +77,8 @@ class _SelectableListViewState<T> extends State<SelectableListView<T>> {
     return _selectableList[index].selected;
   }
 
-  Widget _getLeading(int index) {
-    Widget _leading = _selectableList[index].leading;
+  Widget? _getLeading(int index) {
+    Widget? _leading = _selectableList[index].leading;
     if (_leading == null) {
       return _leading;
     }
@@ -103,9 +103,7 @@ class _SelectableListViewState<T> extends State<SelectableListView<T>> {
           onTap: () {
             setState(() {
               setSelectedValue(index);
-              if (_onSelectedCallback is Function) {
-                _onSelectedCallback(_selectableList);
-              }
+              _onSelectedCallback?.call(_selectableList);
             });
           },
           selected: _selected,
@@ -125,7 +123,7 @@ class SelectableListItem {
   final String id;
   final String title;
   final String subtitle;
-  final Widget leading;
+  final Widget? leading;
   final dynamic extraData;
   bool selected;
 

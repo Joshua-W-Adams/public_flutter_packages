@@ -4,13 +4,13 @@ part of general_widgets;
 /// connection state and error handling.
 class GenericStreamBuilder<T> extends StatelessWidget {
   final Stream<T> stream;
-  final void Function() streamDownFunction;
+  final void Function()? streamDownFunction;
   final Widget Function(AsyncSnapshot<T> snapshot) builder;
 
   GenericStreamBuilder({
-    @required this.stream,
-    @required this.streamDownFunction,
-    @required this.builder,
+    required this.stream,
+    required this.streamDownFunction,
+    required this.builder,
   });
 
   @override
