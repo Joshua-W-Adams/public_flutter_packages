@@ -4,6 +4,9 @@ class IconTextButton extends StatelessWidget {
   /// Icon to display in button. Leave null to hide icon.
   final Icon? icon;
 
+  /// Image to display between icon and label. Leave null to hide image.
+  final Image? image;
+
   /// Text to display under icon. Leave null to hide text.
   final String? label;
 
@@ -34,6 +37,11 @@ class IconTextButton extends StatelessWidget {
   /// Defaults to [ThemeData.disabledColor]
   final Color? disabledTextColor;
 
+  /// The overlay color of the image when no onTap function is provided
+  ///
+  /// Defaults to greyscale color filter
+  final ColorFilter? disabledImageColorFilter;
+
   /// The color for the button's icon when a pointer is hovering over it.
   ///
   /// Defaults to [ThemeData.hoverColor] of the ambient theme.
@@ -44,8 +52,14 @@ class IconTextButton extends StatelessWidget {
   /// Defaults to the Theme's highlight color, [ThemeData.highlightColor].
   final Color? highlightColor;
 
+  /// The radius of the ink Splash
+  ///
+  /// Defaults to the [InkResponse] radius
+  final double? radius;
+
   const IconTextButton({
     this.icon,
+    this.image,
     this.label,
     this.onTap,
     this.toolTip,
@@ -54,8 +68,31 @@ class IconTextButton extends StatelessWidget {
     this.labelStyle,
     this.disabledIconColor,
     this.disabledTextColor,
+    this.disabledImageColorFilter = const ColorFilter.matrix(<double>[
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0.2126,
+      0.7152,
+      0.0722,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+    ]),
     this.hoverColor,
     this.highlightColor,
+    this.radius,
   });
 
   @override
@@ -64,11 +101,13 @@ class IconTextButton extends StatelessWidget {
 
     Color? _disabledIconColor;
     Color? _disabledTextColor;
+    ColorFilter? _disabledImageColorFilter;
 
     /// determine disabled status
     if (onTap == null) {
       _disabledIconColor = disabledIconColor ?? theme.disabledColor;
       _disabledTextColor = disabledTextColor ?? theme.disabledColor;
+      _disabledImageColorFilter = disabledImageColorFilter;
     }
 
     /// generate icon
@@ -103,6 +142,19 @@ class IconTextButton extends StatelessWidget {
       );
     }
 
+    /// generate image
+    Widget _image = Container();
+    if (image != null) {
+      _image = image!;
+      if (_disabledImageColorFilter != null) {
+        // In this case ColorFilter will ignore transparent areas of your images.
+        _image = ColorFiltered(
+          colorFilter: _disabledImageColorFilter,
+          child: image!,
+        );
+      }
+    }
+
     /// generate button
     Widget toolBarButton = InkResponse(
       onTap: onTap,
@@ -111,12 +163,14 @@ class IconTextButton extends StatelessWidget {
       highlightColor: highlightColor ?? theme.highlightColor,
       mouseCursor: mouseCursor,
       enableFeedback: enableFeedback,
+      radius: radius,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: [
           _icon,
+          _image,
           _label,
         ],
       ),
