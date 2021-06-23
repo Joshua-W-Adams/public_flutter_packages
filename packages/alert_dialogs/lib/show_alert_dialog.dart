@@ -1,12 +1,12 @@
 part of alert_dialogs;
 
-Future<bool> showAlertDialog({
-  @required BuildContext context,
-  @required String title,
-  @required String content,
-  String cancelActionText,
-  @required String defaultActionText,
-  void Function() onCloseCallback,
+Future<bool?> showAlertDialog({
+  required BuildContext context,
+  required String title,
+  required String? content,
+  String? cancelActionText,
+  required String defaultActionText,
+  void Function()? onCloseCallback,
   bool barrierDismissible = true,
 }) async {
   return await showDialog(
@@ -15,7 +15,7 @@ Future<bool> showAlertDialog({
     builder: (context) {
       return AlertDialog(
         title: Text(title),
-        content: Text(content),
+        content: Text(content ?? ''),
         actions: <Widget>[
           if (cancelActionText != null)
             TextButton(
