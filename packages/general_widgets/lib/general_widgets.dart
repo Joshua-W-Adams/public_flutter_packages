@@ -17,3 +17,4 @@ part 'checkout.dart';
 part 'generic_stream_builder.dart';
 part 'text_highlighter.dart';
 part 'ui_stream_builder.dart';
+part 'src/icon_text_button.dart';
