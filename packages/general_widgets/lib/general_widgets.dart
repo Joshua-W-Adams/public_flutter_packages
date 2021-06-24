@@ -1,6 +1,7 @@
 library general_widgets;
 
 import 'package:alert_dialogs/alert_dialogs.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 

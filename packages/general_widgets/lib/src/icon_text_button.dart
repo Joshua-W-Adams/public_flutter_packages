@@ -1,6 +1,6 @@
 part of general_widgets;
 
-class IconTextButton extends StatelessWidget {
+class IconTextButton extends StatefulWidget {
   /// Icon to display in button. Leave null to hide icon.
   final IconData? icon;
 
@@ -11,7 +11,10 @@ class IconTextButton extends StatelessWidget {
   final String? label;
 
   /// function to execute when user taps button. Leave null to disable button.
-  final VoidCallback? onTap;
+  ///
+  /// a loading indicator will be displayed while the async function is
+  /// processing
+  final AsyncCallback? onTap;
 
   /// optional tooltip to display.
   final String? toolTip;
@@ -67,6 +70,11 @@ class IconTextButton extends StatelessWidget {
   /// Defaults to the [InkResponse] radius
   final double? radius;
 
+  /// widget to display while the onTap [AsyncCallback] is processing
+  ///
+  /// Defaults to a [CircularProgressIndicator]
+  final Widget loadingIndicator;
+
   const IconTextButton({
     this.icon,
     this.image,
@@ -105,7 +113,42 @@ class IconTextButton extends StatelessWidget {
     this.hoverColor,
     this.highlightColor,
     this.radius,
+    this.loadingIndicator = const Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: CircularProgressIndicator(
+        strokeWidth: 3.0,
+      ),
+    ),
   });
+
+  @override
+  _IconTextButtonState createState() => _IconTextButtonState();
+}
+
+class _IconTextButtonState extends State<IconTextButton> {
+  bool _asyncInProgress = false;
+
+  void _setState() {
+    if (mounted) {
+      /// mounted check to confirm widget has not been removed from tree while
+      /// async function is still in progress
+      setState(() {});
+    }
+  }
+
+  void _onTap() async {
+    if (_asyncInProgress != true && widget.onTap != null) {
+      _asyncInProgress = true;
+      _setState();
+      await widget.onTap?.call().then((_) {
+        _asyncInProgress = false;
+        _setState();
+      }).onError((error, stackTrace) {
+        _asyncInProgress = false;
+        _setState();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,77 +159,87 @@ class IconTextButton extends StatelessWidget {
     ColorFilter? _disabledImageColorFilter;
 
     /// determine disabled status
-    if (onTap == null) {
-      _disabledIconColor = disabledIconColor ?? theme.disabledColor;
-      _disabledTextColor = disabledTextColor ?? theme.disabledColor;
-      _disabledImageColorFilter = disabledImageColorFilter;
+    if (widget.onTap == null) {
+      _disabledIconColor = widget.disabledIconColor ?? theme.disabledColor;
+      _disabledTextColor = widget.disabledTextColor ?? theme.disabledColor;
+      _disabledImageColorFilter = widget.disabledImageColorFilter;
     }
+
+    double _iconSize = widget.iconSize ?? theme.iconTheme.size ?? 24.0;
 
     /// generate icon
     Widget _icon = Container();
-    if (icon != null) {
+    if (widget.icon != null) {
       _icon = Align(
         alignment: Alignment.topCenter,
         heightFactor: 1.0,
         child: Icon(
-          icon!,
-          size: iconSize,
-          color: _disabledIconColor ?? iconColor,
+          widget.icon!,
+          size: _iconSize,
+          color: _disabledIconColor ?? widget.iconColor,
         ),
       );
     }
 
     /// generate icon label
     Widget _label = Container();
-    if (label != null) {
-      TextStyle _labelStyle = labelStyle ?? TextStyle();
+    if (widget.label != null) {
+      TextStyle _labelStyle = widget.labelStyle ?? TextStyle();
       if (_disabledTextColor != null) {
         _labelStyle = _labelStyle.copyWith(color: _disabledTextColor);
       }
       _label = Text(
-        label!,
+        widget.label!,
         style: _labelStyle,
       );
     }
 
     /// generate image
     Widget _image = Container();
-    if (image != null) {
-      _image = image!;
+    if (widget.image != null) {
+      _image = widget.image!;
       if (_disabledImageColorFilter != null) {
         // In this case ColorFilter will ignore transparent areas of your images.
         _image = ColorFiltered(
           colorFilter: _disabledImageColorFilter,
-          child: image!,
+          child: widget.image!,
         );
       }
     }
 
+    /// generate loading indicator
+    Widget _loadingIndicator = SizedBox(
+      height: _iconSize,
+      width: _iconSize,
+      child: widget.loadingIndicator,
+    );
+
     /// generate button
     Widget toolBarButton = InkResponse(
-      onTap: onTap,
-      canRequestFocus: onTap != null,
-      hoverColor: hoverColor ?? theme.hoverColor,
-      highlightColor: highlightColor ?? theme.highlightColor,
-      mouseCursor: mouseCursor,
-      enableFeedback: enableFeedback,
-      radius: radius,
+      onTap: _asyncInProgress == false && widget.onTap != null ? _onTap : null,
+      canRequestFocus: widget.onTap != null,
+      hoverColor: widget.hoverColor ?? theme.hoverColor,
+      highlightColor: widget.highlightColor ?? theme.highlightColor,
+      mouseCursor: widget.mouseCursor,
+      enableFeedback: widget.enableFeedback,
+      radius: widget.radius,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _icon,
-          _image,
+          if (!_asyncInProgress) _icon,
+          if (!_asyncInProgress) _image,
+          if (_asyncInProgress) _loadingIndicator,
           _label,
         ],
       ),
     );
 
     /// conditionally wrap with tooltip
-    if (toolTip != null) {
+    if (widget.toolTip != null) {
       toolBarButton = Tooltip(
-        message: toolTip!,
+        message: widget.toolTip!,
         preferBelow: false,
         child: toolBarButton,
       );
