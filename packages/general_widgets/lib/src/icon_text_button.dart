@@ -2,7 +2,7 @@ part of general_widgets;
 
 class IconTextButton extends StatelessWidget {
   /// Icon to display in button. Leave null to hide icon.
-  final Icon? icon;
+  final IconData? icon;
 
   /// Image to display between icon and label. Leave null to hide image.
   final Image? image;
@@ -23,6 +23,16 @@ class IconTextButton extends StatelessWidget {
 
   /// Whether detected gestures should provide acoustic and/or haptic feedback.
   final bool enableFeedback;
+
+  /// size of the icon to display in the button
+  ///
+  /// Defaults to default size defined in [Icon] widget
+  final double? iconSize;
+
+  /// Color of the icon to display in the button when active
+  ///
+  /// Defaults to color defined in [Icon] widget
+  final Color? iconColor;
 
   /// text style to apply to label
   final TextStyle? labelStyle;
@@ -65,6 +75,8 @@ class IconTextButton extends StatelessWidget {
     this.toolTip,
     this.mouseCursor = SystemMouseCursors.click,
     this.enableFeedback = true,
+    this.iconSize,
+    this.iconColor,
     this.labelStyle,
     this.disabledIconColor,
     this.disabledTextColor,
@@ -113,19 +125,14 @@ class IconTextButton extends StatelessWidget {
     /// generate icon
     Widget _icon = Container();
     if (icon != null) {
-      Widget _iconChild = icon!;
-      if (_disabledIconColor != null) {
-        _iconChild = IconTheme.merge(
-          data: IconThemeData(
-            color: _disabledIconColor,
-          ),
-          child: icon!,
-        );
-      }
       _icon = Align(
         alignment: Alignment.topCenter,
         heightFactor: 1.0,
-        child: _iconChild,
+        child: Icon(
+          icon!,
+          size: iconSize,
+          color: _disabledIconColor ?? iconColor,
+        ),
       );
     }
 
