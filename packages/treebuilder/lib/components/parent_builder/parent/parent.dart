@@ -2,7 +2,7 @@ part of treebuilder;
 
 /// Wrapper widget for all parent widgets to enable disabling or hiding all child
 /// widgets
-class ParentWidget extends StatefulWidget {
+class ParentWidget extends StatelessWidget {
   /// whether the widget should display all children or not
   final bool expanded;
 
@@ -37,6 +37,10 @@ class ParentWidget extends StatefulWidget {
   /// onPressed callback function for the displayed icon
   final VoidCallback? onPressed;
 
+  /// display children above the parent widget. Default is to display below the
+  /// parent widget.
+  final bool expandUp;
+
   ParentWidget({
     Key? key,
     required this.expanded,
@@ -44,104 +48,54 @@ class ParentWidget extends StatefulWidget {
     required this.children,
     this.leading,
     this.trailing,
-    this.icon = const Icon(Icons.keyboard_arrow_down),
+    this.icon = const Icon(Icons.keyboard_arrow_right),
     this.iconButtonWidth = kMinInteractiveDimension,
     this.iconButtonHeight = kMinInteractiveDimension,
     this.iconLeading = true,
     this.parentRowColor,
     this.onPressed,
+    this.expandUp = false,
   }) : super(key: key);
 
   @override
-  _ParentWidgetState createState() => _ParentWidgetState();
-}
-
-class _ParentWidgetState extends State<ParentWidget>
-    with SingleTickerProviderStateMixin {
-  Animation<double>? sizeAnimation;
-  AnimationController? expandController;
-  bool? _expanded;
-
-  @override
-  void initState() {
-    super.initState();
-    expandController = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 300,
-      ),
-    );
-    Animation<double> curve = CurvedAnimation(
-      parent: expandController!,
-      curve: Curves.fastOutSlowIn,
-    );
-    sizeAnimation = Tween(
-      begin: 0.0,
-      end: 0.5,
-    ).animate(curve)
-      ..addListener(
-        () {
-          setState(() {});
-        },
-      );
-  }
-
-  @override
-  void dispose() {
-    expandController!.dispose();
-    super.dispose();
-  }
-
-  void _runAnimation() {
-    /// only run animation if the expanded status has changed
-    if (_expanded != widget.expanded) {
-      /// run the animation based on the provided expanded status
-      if (widget.expanded) {
-        expandController!.forward();
-      } else {
-        expandController!.reverse();
-      }
-      _expanded = widget.expanded;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _runAnimation();
-    Widget icon = widget.icon != null
+    Widget _icon = icon != null
         ? SizedBox(
-            height: widget.iconButtonHeight,
-            width: widget.iconButtonWidth,
+            height: iconButtonHeight,
+            width: iconButtonWidth,
             child: IconButton(
-              onPressed: widget.onPressed,
-              icon: RotationTransition(
-                turns: sizeAnimation!,
-                child: widget.icon,
+              onPressed: onPressed,
+              icon: RotationAnimation(
+                forward: expanded,
+                child: icon!,
               ),
             ),
           )
         : Container();
 
     List<Widget> parentWidgets = [
-      if (widget.leading != null) ...[widget.leading!],
-      if (widget.iconLeading == true) ...[icon],
-      widget.parent,
-      if (widget.iconLeading == false) ...[icon],
-      if (widget.trailing != null) ...[widget.trailing!]
+      if (leading != null) ...[leading!],
+      if (iconLeading == true) ...[_icon],
+      parent,
+      if (iconLeading == false) ...[_icon],
+      if (trailing != null) ...[trailing!]
     ];
+
+    Widget _children = ChildWidget(
+      children: children,
+      shouldExpand: expanded,
+    );
 
     return Column(
       children: [
+        if (expandUp) ...[_children],
         Container(
-          color: widget.parentRowColor,
+          color: parentRowColor,
           child: Row(
             children: parentWidgets,
           ),
         ),
-        ChildWidget(
-          children: widget.children,
-          shouldExpand: widget.expanded,
-        ),
+        if (!expandUp) ...[_children],
       ],
     );
   }
