@@ -10,6 +10,13 @@ class Tree extends StatefulWidget {
 
 class _TreeState extends State<Tree> {
   Map<dynamic, ParentBloc> parentBlocs = Map();
+  List<IUniqueParentChildRow> _data;
+
+  @override
+  void initState() {
+    super.initState();
+    _data = MockDataService.getData();
+  }
 
   @override
   void dispose() {
@@ -24,11 +31,20 @@ class _TreeState extends State<Tree> {
     });
   }
 
+  ParentBloc _getParentBloc(SampleData parent) {
+    if (parentBlocs[parent] != null) {
+      return parentBlocs[parent];
+    }
+
+    ParentBloc parentBloc = ParentBloc(expanded: true);
+    parentBlocs[parent] = parentBloc;
+    return parentBloc;
+  }
+
   @override
   Widget build(BuildContext context) {
-    _disposeParentBlocs();
     return TreeBuilder(
-      data: MockDataService.getData(),
+      data: _data,
       childBuilder: (child, parent, depth) {
         SampleData c = child;
         return Row(
@@ -41,19 +57,15 @@ class _TreeState extends State<Tree> {
         );
       },
       parentBuilder: (parent, _, __, depth, childrenWidgets) {
-        SampleData p = parent;
-        ParentBloc parentBloc = ParentBloc(expanded: true);
-        parentBlocs[parent] = parentBloc;
-
+        ParentBloc parentBloc = _getParentBloc(parent);
         return ParentBuilder(
           stream: parentBloc.stream,
           builder: (expanded) {
             return ParentWidget(
-              parent: Text('${p.name}'),
+              parent: Text('${parent.name}'),
               expanded: expanded,
               parentRowColor: depth == 0 ? Colors.lightBlue : null,
               children: childrenWidgets,
-              icon: Icon(Icons.keyboard_arrow_down),
               onPressed: () {
                 parentBloc.setExpanded(!expanded);
               },

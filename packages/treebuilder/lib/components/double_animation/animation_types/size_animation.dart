@@ -34,7 +34,7 @@ class SizeAnimation extends StatelessWidget {
     Key? key,
     required this.child,
     this.tweenBegin = 0.0,
-    this.tweenEnd = 0.1,
+    this.tweenEnd = 1.0,
     this.animationDurationMs = 300,
     this.animationCurve = Curves.fastOutSlowIn,
     this.forward = true,

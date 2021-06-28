@@ -28,9 +28,6 @@ class TreeBuilder<T extends IUniqueParentChildRow> extends StatelessWidget {
   /// Fetchs the immediate children of root. Default is null.
   final String? buildFromId;
 
-  // constructed instance of tree
-  List<Widget>? _tree;
-
   TreeBuilder({
     Key? key,
     required this.data,
@@ -38,12 +35,7 @@ class TreeBuilder<T extends IUniqueParentChildRow> extends StatelessWidget {
     required this.childBuilder,
     required this.endOfDepthBuilder,
     this.buildFromId,
-  }) : super(key: key) {
-    // recursive build tree funciton needs to occur as soon as the tree is
-    // constructed to ensure all recursive calculations occur BEFORE subsequent
-    // operations are performed.
-    _tree = _buildTree();
-  }
+  }) : super(key: key);
 
   List<Widget> _buildTree() {
     // get all root data to start from
@@ -70,11 +62,12 @@ class TreeBuilder<T extends IUniqueParentChildRow> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> _tree = _buildTree();
     return SingleChildScrollView(
-      child: _tree!.length > 0
+      child: _tree.length > 0
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: _tree!,
+              children: _tree,
             )
           : Container(),
       scrollDirection: Axis.vertical,

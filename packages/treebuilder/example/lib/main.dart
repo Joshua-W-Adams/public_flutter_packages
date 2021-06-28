@@ -16,16 +16,18 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: Text('Sample Tree App'),
         ),
-        body: Column(
-          children: [
-            TreeHeading(text: 'Standard Tree'),
-            Tree(),
-            SizedBox(
-              height: 50,
-            ),
-            TreeHeading(text: 'Synced Tree'),
-            SyncedTree(),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              TreeHeading(text: 'Standard Tree'),
+              Tree(),
+              SizedBox(
+                height: 50,
+              ),
+              TreeHeading(text: 'Synced Tree'),
+              SyncedTree(),
+            ],
+          ),
         ),
       ),
     );
