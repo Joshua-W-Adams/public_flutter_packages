@@ -62,13 +62,16 @@ class _TreeState extends State<Tree> {
           stream: parentBloc.stream,
           builder: (expanded) {
             return ParentWidget(
-              parent: Text('${parent.name}'),
+              parent: RotatingIconRow(
+                expanded: expanded,
+                rowColor: depth == 0 ? Colors.lightBlue : null,
+                content: Text('${parent.name}'),
+                onPressed: () {
+                  parentBloc.setExpanded(!expanded);
+                },
+              ),
               expanded: expanded,
-              parentRowColor: depth == 0 ? Colors.lightBlue : null,
               children: childrenWidgets,
-              onPressed: () {
-                parentBloc.setExpanded(!expanded);
-              },
             );
           },
         );
