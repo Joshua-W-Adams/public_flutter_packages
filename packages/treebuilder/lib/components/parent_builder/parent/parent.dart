@@ -76,7 +76,7 @@ class ParentWidget extends StatelessWidget {
     List<Widget> parentWidgets = [
       if (leading != null) ...[leading!],
       if (iconLeading == true) ...[_icon],
-      parent,
+      Expanded(child: parent),
       if (iconLeading == false) ...[_icon],
       if (trailing != null) ...[trailing!]
     ];
