@@ -9,9 +9,9 @@ import 'package:general_widgets/general_widgets.dart';
 /// class to store generic information about a file so differnt file types can
 /// be handled
 class FileUploadModel {
-  String mimeType;
-  File file;
-  String url;
+  String? mimeType;
+  File? file;
+  String? url;
 
   FileUploadModel({
     this.mimeType,
@@ -28,16 +28,16 @@ typedef AddRemoveFileFunction = void Function(
 typedef FilePickerFunction = Future<File> Function();
 
 class MultiFilePicker extends StatefulWidget {
-  final List<FileUploadModel> fileModels;
+  final List<FileUploadModel>? fileModels;
   final int initialTileCount;
   final int maxTileCount;
-  final double height;
-  final double width;
-  final AddRemoveFileFunction addRemoveFileFunction;
-  final FilePickerFunction cameraImgPickerFunction;
-  final FilePickerFunction cameraVideoPickerFunction;
-  final FilePickerFunction galleryImgPickerFunction;
-  final FilePickerFunction galleryVideoPickerFunction;
+  final double? height;
+  final double? width;
+  final AddRemoveFileFunction? addRemoveFileFunction;
+  final FilePickerFunction? cameraImgPickerFunction;
+  final FilePickerFunction? cameraVideoPickerFunction;
+  final FilePickerFunction? galleryImgPickerFunction;
+  final FilePickerFunction? galleryVideoPickerFunction;
   final String displayType;
   final String selectFileText;
 
@@ -69,7 +69,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
     super.initState();
     if (widget.fileModels != null) {
       // load existing files
-      _files = widget.fileModels.map((fileModel) {
+      _files = widget.fileModels!.map((fileModel) {
         Object f = fileModel;
         return f;
       }).toList();
@@ -112,7 +112,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
     }
   }
 
-  void _addFile({File file, String mimeType, int index}) {
+  void _addFile({File? file, String? mimeType, required int index}) {
     FileUploadModel fileUpload = new FileUploadModel();
     fileUpload.mimeType = mimeType;
     fileUpload.file = file;
@@ -121,7 +121,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
     // send details top parent widget to allow handling of file operations
     widget.addRemoveFileFunction == null
         ? null
-        : widget.addRemoveFileFunction(
+        : widget.addRemoveFileFunction!(
             _files.whereType<FileUploadModel>().toList(),
           );
     // ensure there are sufficient upload tiles displayed
@@ -134,7 +134,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
     // send details top parent widget to allow handling of file operations
     widget.addRemoveFileFunction == null
         ? null
-        : widget.addRemoveFileFunction(
+        : widget.addRemoveFileFunction!(
             _files.whereType<FileUploadModel>().toList(),
           );
     // ensure there are sufficient upload tiles displayed
@@ -154,7 +154,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Take a photo'),
                     onPressed: () async {
                       Navigator.pop(context);
-                      File imageFile = await widget.cameraImgPickerFunction();
+                      File imageFile = await widget.cameraImgPickerFunction!();
                       setState(() {
                         _addFile(
                           file: imageFile,
@@ -170,7 +170,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Choose image from gallery'),
                     onPressed: () async {
                       Navigator.of(context).pop();
-                      File imageFile = await widget.galleryImgPickerFunction();
+                      File imageFile = await widget.galleryImgPickerFunction!();
                       setState(() {
                         _addFile(
                           file: imageFile,
@@ -186,7 +186,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Take a video'),
                     onPressed: () async {
                       Navigator.pop(context);
-                      File videoFile = await widget.cameraVideoPickerFunction();
+                      File videoFile = await widget.cameraVideoPickerFunction!();
                       setState(() {
                         _addFile(
                           file: videoFile,
@@ -203,7 +203,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     onPressed: () async {
                       Navigator.of(context).pop();
                       File videoFile =
-                          await widget.galleryVideoPickerFunction();
+                          await widget.galleryVideoPickerFunction!();
                       setState(() {
                         _addFile(
                           file: videoFile,
@@ -269,7 +269,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     Text(
                       widget.selectFileText,
                       style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyText1.color,
+                        color: Theme.of(context).textTheme.bodyText1!.color,
                       ),
                     ),
                   ],
@@ -284,9 +284,9 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
   }
 
   Widget _buildVideo({
-    File localFile,
-    String networkUrl,
-    bool mute,
+    File? localFile,
+    String? networkUrl,
+    bool? mute,
   }) {
     return ChewiePlayerScreen(
       localFile: localFile ?? null,
@@ -300,15 +300,15 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
 
   Widget _getFileImage(FileUploadModel uploadModel) {
     Widget image = Container();
-    if (uploadModel.mimeType.contains('image')) {
+    if (uploadModel.mimeType!.contains('image')) {
       if (uploadModel.file != null) {
         image = Image.file(
-          uploadModel.file,
+          uploadModel.file!,
           fit: BoxFit.cover,
         );
       } else if (uploadModel.url != null) {
         image = Image.network(
-          uploadModel.url,
+          uploadModel.url!,
           fit: BoxFit.cover,
         );
       }
@@ -320,7 +320,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
   }
 
   Widget _getFileVideo(FileUploadModel uploadModel) {
-    if (uploadModel.mimeType.contains('video')) {
+    if (uploadModel.mimeType!.contains('video')) {
       if (uploadModel.file != null) {
         return Container(
           child: _buildVideo(
@@ -339,7 +339,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
   }
 
   Widget _buildFileCard(int index) {
-    FileUploadModel uploadModel = _files[index];
+    FileUploadModel uploadModel = _files[index] as FileUploadModel;
     return Container(
       child: Stack(
         alignment: Alignment.center,
