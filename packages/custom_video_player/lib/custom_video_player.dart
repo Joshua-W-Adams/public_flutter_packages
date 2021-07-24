@@ -9,17 +9,17 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 
 class ChewiePlayerScreen extends StatefulWidget {
-  final Key key;
-  final String networkUrl;
-  final String localUrl;
-  final File localFile;
+  final Key? key;
+  final String? networkUrl;
+  final String? localUrl;
+  final File? localFile;
   final bool looping;
   final bool autoPlay;
   final bool showControls;
   final bool mute;
 
   /// overrides default controller
-  final ChewieController chewieController;
+  final ChewieController? chewieController;
 
   // {} = named parameters are required on class initialisation
   // @required = required parameters to be passed
@@ -28,10 +28,10 @@ class ChewiePlayerScreen extends StatefulWidget {
     this.networkUrl,
     this.localUrl,
     this.localFile,
-    this.looping,
-    this.autoPlay,
-    this.showControls,
-    this.mute,
+    this.looping = false,
+    this.autoPlay = false,
+    this.showControls = true,
+    this.mute = false,
     this.chewieController,
   }) : super(key: key);
 
@@ -40,9 +40,9 @@ class ChewiePlayerScreen extends StatefulWidget {
 }
 
 class _ChewiePlayerScreenState extends State<ChewiePlayerScreen> {
-  ChewieController _chewieController;
+  ChewieController? _chewieController;
   bool _videoCheck = true;
-  VideoPlayerController videoPlayerController;
+  VideoPlayerController? videoPlayerController;
 
   void _getChewieVideo() {
     if (widget.chewieController != null) {
@@ -52,11 +52,11 @@ class _ChewiePlayerScreenState extends State<ChewiePlayerScreen> {
 
     // https://flutter.dev/docs/cookbook/plugins/play-video
     if (widget.networkUrl != null) {
-      videoPlayerController = VideoPlayerController.network(widget.networkUrl);
+      videoPlayerController = VideoPlayerController.network(widget.networkUrl!);
     } else if (widget.localUrl != null) {
-      videoPlayerController = VideoPlayerController.asset(widget.localUrl);
+      videoPlayerController = VideoPlayerController.asset(widget.localUrl!);
     } else if (widget.localFile != null) {
-      videoPlayerController = VideoPlayerController.file(widget.localFile);
+      videoPlayerController = VideoPlayerController.file(widget.localFile!);
     } else {
       // no video details passed to widget... comment error handling
       _videoCheck = false;
@@ -66,11 +66,11 @@ class _ChewiePlayerScreenState extends State<ChewiePlayerScreen> {
 
     // add any additional configuration not allowed by the chewie player
     if (widget.mute == true) {
-      videoPlayerController.setVolume(0);
+      videoPlayerController!.setVolume(0);
     }
 
     _chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
+      videoPlayerController: videoPlayerController!,
       aspectRatio: 1 / 1,
       // Shows the first frame of the video as opposed to a dark screen
       autoInitialize: true,
@@ -112,7 +112,7 @@ class _ChewiePlayerScreenState extends State<ChewiePlayerScreen> {
       );
     }
     return Chewie(
-      controller: _chewieController,
+      controller: _chewieController!,
     );
   }
 
