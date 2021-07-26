@@ -94,14 +94,10 @@ class FirestoreService {
 
   // ******************* Snapshot Functions *******************
 
-  /// Creates a snapshot of a firestore collection and parses it to a new
-  /// datatype with the builder function
-  Future<List<T>> collectionSnapshot<T>({
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> collectionSnapshot({
     required String path,
-    required T Function(Map<String, dynamic>? data, String documentID) builder,
     Query<Map<String, dynamic>>? Function(Query<Map<String, dynamic>> query)?
         queryBuilder,
-    int Function(T lhs, T rhs)? sort,
   }) async {
     Query<Map<String, dynamic>> query =
         FirebaseFirestore.instance.collection(path);
@@ -109,7 +105,21 @@ class FirestoreService {
       query = queryBuilder(query)!;
     }
     final QuerySnapshot<Map<String, dynamic>> snapshot = await query.get();
-    final result = snapshot.docs
+    return snapshot.docs;
+  }
+
+  /// Creates a snapshot of a firestore collection and parses it to a new
+  /// datatype with the builder function
+  Future<List<T>> collectionSnapshotBuilder<T>({
+    required String path,
+    required T Function(Map<String, dynamic>? data, String documentID) builder,
+    Query<Map<String, dynamic>>? Function(Query<Map<String, dynamic>> query)?
+        queryBuilder,
+    int Function(T lhs, T rhs)? sort,
+  }) async {
+    final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+        await collectionSnapshot(path: path, queryBuilder: queryBuilder);
+    final result = docs
         .map((snapshot) => builder(snapshot.data(), snapshot.id))
         .where((value) => value != null)
         .toList();
