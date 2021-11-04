@@ -6,7 +6,7 @@ class FirebaseStorageService {
   final String uid;
 
   FirebaseStorageService({
-    @required this.uid,
+    required this.uid,
   }) : assert(uid != null);
   // assert used to validate the assumption that uid is not null
 
@@ -21,9 +21,9 @@ class FirebaseStorageService {
   /// Generic file upload for any [path] and [contentType]
   /// uploads file to firebase then returns the download url to the user
   Future<String> upload({
-    @required File file,
-    @required String path,
-    @required String mimeType,
+    required File file,
+    required String path,
+    required String mimeType,
   }) async {
     // get a reference to the provided file path on firebase
     final storageReference = FirebaseStorage.instance.ref().child(path);
@@ -77,8 +77,8 @@ class FirebaseStorageService {
   // *********************** Specific Upload Methods ***********************
 
   Future<List<UploadAsset>> uploadAssets({
-    @required List<UploadAsset> assets,
-    @required Function(String uuid, UploadAsset asset) pathBuilder,
+    required List<UploadAsset> assets,
+    required Function(String uuid, UploadAsset asset) pathBuilder,
   }) async {
     // execute upload tasks for all content in paralell
     await Future.wait(
@@ -109,7 +109,7 @@ class FirebaseStorageService {
 
   // Upload an avatar from file
   Future<List<UploadAsset>> uploadAvatar({
-    @required List<UploadAsset> assets,
+    required List<UploadAsset> assets,
   }) async {
     return uploadAssets(
       assets: assets,
@@ -120,7 +120,7 @@ class FirebaseStorageService {
   }
 
   String _getFileType({
-    @required String mimeType,
+    required String mimeType,
   }) {
     List mimeDetails = mimeType.split('/');
     if (mimeDetails.length == 2) {
@@ -131,7 +131,7 @@ class FirebaseStorageService {
   }
 
   String _getFileExtension({
-    @required String mimeType,
+    required String mimeType,
   }) {
     List mimeDetails = mimeType.split('/');
     if (mimeDetails.length == 2) {
@@ -142,7 +142,7 @@ class FirebaseStorageService {
   }
 
   Future<List<UploadAsset>> uploadPostContent({
-    @required List<UploadAsset> assets,
+    required List<UploadAsset> assets,
   }) async {
     return uploadAssets(
       assets: assets,
@@ -174,11 +174,11 @@ class FirebaseStorageService {
 class UploadAsset {
   File file;
   String mimeType;
-  String downloadUrl;
+  String? downloadUrl;
 
   UploadAsset({
-    @required this.file,
-    @required this.mimeType,
+    required this.file,
+    required this.mimeType,
     this.downloadUrl,
   });
 }
