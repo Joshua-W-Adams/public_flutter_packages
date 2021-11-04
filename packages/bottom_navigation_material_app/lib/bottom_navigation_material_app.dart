@@ -11,7 +11,7 @@ class BottomNavigationMaterialApp extends StatefulWidget {
   final List<NavigationTabModel> navigationTabs;
 
   // route generator used to build all material page routes
-  final Route<dynamic> Function(RouteSettings settings) generateRouteFunction;
+  final Route<dynamic>? Function(RouteSettings settings)? generateRouteFunction;
 
   final ThemeData? theme;
 
