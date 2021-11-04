@@ -34,9 +34,9 @@ class StepProcess extends StatefulWidget {
   final EdgeInsets footerPadding;
 
   StepProcess({
-    Key key,
-    @required this.steps,
-    @required this.onCompleted,
+    Key? key,
+    required this.steps,
+    required this.onCompleted,
     this.footerIndicatorType = 'text',
     this.backText = 'PREV',
     this.nextText = 'NEXT',
@@ -60,7 +60,6 @@ class StepProcessState extends State<StepProcess> {
   void dispose() {
     // clean up state variables
     _controller.dispose();
-    _controller = null;
     super.dispose();
   }
 
@@ -68,7 +67,7 @@ class StepProcessState extends State<StepProcess> {
   /// Preventing users from performing additional requests while one is
   /// processing.
   void _processRequest({
-    Future<void> Function() requestFuture,
+    required Future<void> Function() requestFuture,
   }) {
     // check if request has already been issued
     if (!_requestPending) {
@@ -288,8 +287,8 @@ class StepModel {
   final bool persistState;
 
   StepModel({
-    @required this.content,
-    @required this.validator,
+    required this.content,
+    required this.validator,
     this.persistState = true,
   });
 }

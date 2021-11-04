@@ -9,8 +9,8 @@ class PersistStateWidget extends StatefulWidget {
   final Widget child;
 
   const PersistStateWidget({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
   }) : super(key: key);
 
   @override

@@ -2,16 +2,16 @@ part of step_process;
 
 class PageTitle extends StatelessWidget {
   final String title;
-  final TextStyle titleTextStyle;
+  final TextStyle? titleTextStyle;
   final String subtitle;
-  final TextStyle subtitleTextStyle;
-  final Color backgroundColor;
-  final Icon icon;
+  final TextStyle? subtitleTextStyle;
+  final Color? backgroundColor;
+  final Icon? icon;
 
   PageTitle({
-    @required this.title,
+    required this.title,
     this.titleTextStyle,
-    @required this.subtitle,
+    required this.subtitle,
     this.subtitleTextStyle,
     this.backgroundColor,
     this.icon,
@@ -41,7 +41,7 @@ class PageTitle extends StatelessWidget {
                       TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
-                        color: theme.accentTextTheme.bodyText1.color,
+                        color: theme.accentTextTheme.bodyText1!.color,
                       ),
                   maxLines: 2,
                 ),
@@ -57,7 +57,7 @@ class PageTitle extends StatelessWidget {
                 TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.w600,
-                  color: theme.accentTextTheme.bodyText1.color,
+                  color: theme.accentTextTheme.bodyText1!.color,
                 ),
           ),
         ],
