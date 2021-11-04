@@ -3,7 +3,7 @@ part of general_widgets;
 /// [GenericStreamBuilder] is an extension of a [StreamBuilder] with basic
 /// connection state and error handling.
 class GenericStreamBuilder<T> extends StatelessWidget {
-  final Stream<T> stream;
+  final Stream<T>? stream;
   final void Function()? streamDownFunction;
   final Widget Function(AsyncSnapshot<T> snapshot) builder;
 
