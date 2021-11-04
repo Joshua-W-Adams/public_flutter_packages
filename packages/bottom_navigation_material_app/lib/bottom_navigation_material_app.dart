@@ -13,14 +13,14 @@ class BottomNavigationMaterialApp extends StatefulWidget {
   // route generator used to build all material page routes
   final Route<dynamic> Function(RouteSettings settings) generateRouteFunction;
 
-  final ThemeData theme;
+  final ThemeData? theme;
 
-  final Widget Function(NavigationTabModel tab, Navigator tabNavigator)
+  final Widget Function(NavigationTabModel tab, Navigator tabNavigator)?
       navigatorBuilder;
 
   BottomNavigationMaterialApp({
-    @required this.navigationTabs,
-    @required this.generateRouteFunction,
+    required this.navigationTabs,
+    required this.generateRouteFunction,
     this.theme,
     this.navigatorBuilder,
   });
@@ -40,7 +40,7 @@ class _BottomNavigationMaterialAppState
       /// case 1 - if user presses on currently selected tab
       /// pop to first route - i.e. ensure no routes are over laid on top of the
       /// current route
-      widget.navigationTabs[_currentIndex].navigatorKey.currentState
+      widget.navigationTabs[_currentIndex].navigatorKey.currentState!
           .popUntil((route) {
         return route.isFirst;
       });
@@ -64,10 +64,10 @@ class _BottomNavigationMaterialAppState
       );
       return WillPopScope(
         onWillPop: () async {
-          return !await tab.navigatorKey.currentState.maybePop();
+          return !await tab.navigatorKey.currentState!.maybePop();
         },
         child: widget.navigatorBuilder != null
-            ? widget.navigatorBuilder(tab, tabNavigator)
+            ? widget.navigatorBuilder!(tab, tabNavigator)
             : tabNavigator,
       );
     }).toList();
@@ -118,9 +118,9 @@ class NavigationTabModel {
   final GlobalKey<NavigatorState> navigatorKey;
 
   NavigationTabModel({
-    @required this.title,
-    @required this.icon,
-    @required this.url,
-    @required this.navigatorKey,
+    required this.title,
+    required this.icon,
+    required this.url,
+    required this.navigatorKey,
   });
 }
