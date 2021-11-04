@@ -127,7 +127,7 @@ class StepProcessState extends State<StepProcess> {
     _processRequest(
       requestFuture: () async {
         // call validator method for moving to next step
-        String validation = await widget.steps[_currentStep].validator();
+        String? validation = await widget.steps[_currentStep].validator();
         if (validation == null) {
           // on validation passed
           skipStep();
@@ -281,7 +281,7 @@ class StepModel {
   final Widget content;
   // validation required before allowing moving to the next step. Return null if
   // validation passed.
-  final Future<String> Function() validator;
+  final Future<String>? Function() validator;
   // whether the state of the step will be peristed on moving between steps.
   // default is true.
   final bool persistState;
