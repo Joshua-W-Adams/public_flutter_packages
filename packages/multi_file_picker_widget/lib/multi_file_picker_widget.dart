@@ -25,7 +25,7 @@ typedef AddRemoveFileFunction = void Function(
   List<FileUploadModel> files,
 );
 
-typedef FilePickerFunction = Future<File> Function();
+typedef FilePickerFunction = Future<File?> Function();
 
 class MultiFilePicker extends StatefulWidget {
   final List<FileUploadModel>? fileModels;
@@ -154,7 +154,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Take a photo'),
                     onPressed: () async {
                       Navigator.pop(context);
-                      File imageFile = await widget.cameraImgPickerFunction!();
+                      File? imageFile = await widget.cameraImgPickerFunction!();
                       setState(() {
                         _addFile(
                           file: imageFile,
@@ -170,7 +170,8 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Choose image from gallery'),
                     onPressed: () async {
                       Navigator.of(context).pop();
-                      File imageFile = await widget.galleryImgPickerFunction!();
+                      File? imageFile =
+                          await widget.galleryImgPickerFunction!();
                       setState(() {
                         _addFile(
                           file: imageFile,
@@ -186,7 +187,8 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Take a video'),
                     onPressed: () async {
                       Navigator.pop(context);
-                      File videoFile = await widget.cameraVideoPickerFunction!();
+                      File? videoFile =
+                          await widget.cameraVideoPickerFunction!();
                       setState(() {
                         _addFile(
                           file: videoFile,
@@ -202,7 +204,7 @@ class _MultiFilePickerState extends State<MultiFilePicker> {
                     child: const Text('Choose video from gallery'),
                     onPressed: () async {
                       Navigator.of(context).pop();
-                      File videoFile =
+                      File? videoFile =
                           await widget.galleryVideoPickerFunction!();
                       setState(() {
                         _addFile(
