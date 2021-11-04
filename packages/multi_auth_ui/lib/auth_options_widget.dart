@@ -5,18 +5,18 @@ part of multi_auth_ui;
 class AuthOptions extends StatefulWidget {
   final String authOptionsTitle;
   final List<String> authProviders;
-  final Future Function() signInAnonymously;
-  final Future Function() signInWithGoogle;
-  final Future Function() signInWithFacebook;
-  final Future Function() signInWithApple;
-  final String linkCredentialsErrorMessage;
-  final Function(dynamic credentials) linkCredentialsCallback;
-  final Function() emailSignInCallback;
-  final int separatorLocation;
+  final Future Function()? signInAnonymously;
+  final Future Function()? signInWithGoogle;
+  final Future Function()? signInWithFacebook;
+  final Future Function()? signInWithApple;
+  final String? linkCredentialsErrorMessage;
+  final Function(dynamic credentials)? linkCredentialsCallback;
+  final Function()? emailSignInCallback;
+  final int? separatorLocation;
 
   AuthOptions({
-    Key key,
-    @required this.authOptionsTitle,
+    Key? key,
+    required this.authOptionsTitle,
     this.authProviders = const [
       "password",
       "google.com",
@@ -57,7 +57,7 @@ class _AuthOptionsState extends State<AuthOptions> {
       if (e is PlatformException &&
           e.code == widget.linkCredentialsErrorMessage) {
         if (widget.linkCredentialsCallback != null) {
-          widget.linkCredentialsCallback(e.details);
+          widget.linkCredentialsCallback!(e.details);
         }
       } else {
         await showExceptionAlertDialog(
@@ -81,7 +81,7 @@ class _AuthOptionsState extends State<AuthOptions> {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.5),
+          color: Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.5),
         ),
       ),
     );
@@ -108,7 +108,7 @@ class _AuthOptionsState extends State<AuthOptions> {
           ? null
           : () {
               if (widget.emailSignInCallback != null) {
-                widget.emailSignInCallback();
+                widget.emailSignInCallback!();
               } else {
                 _showNoSignInFunctionError();
               }
@@ -131,7 +131,7 @@ class _AuthOptionsState extends State<AuthOptions> {
           : () async {
               if (widget.signInWithGoogle != null) {
                 await _signIn(() {
-                  return widget.signInWithGoogle();
+                  return widget.signInWithGoogle!();
                 });
               } else {
                 _showNoSignInFunctionError();
@@ -155,7 +155,7 @@ class _AuthOptionsState extends State<AuthOptions> {
           : () async {
               if (widget.signInWithApple != null) {
                 await _signIn(() {
-                  return widget.signInWithApple();
+                  return widget.signInWithApple!();
                 });
               } else {
                 _showNoSignInFunctionError();
@@ -179,7 +179,7 @@ class _AuthOptionsState extends State<AuthOptions> {
           : () async {
               if (widget.signInWithFacebook != null) {
                 await _signIn(() {
-                  return widget.signInWithFacebook();
+                  return widget.signInWithFacebook!();
                 });
               } else {
                 _showNoSignInFunctionError();
@@ -200,7 +200,7 @@ class _AuthOptionsState extends State<AuthOptions> {
           : () async {
               if (widget.signInAnonymously != null) {
                 await _signIn(() {
-                  return widget.signInAnonymously();
+                  return widget.signInAnonymously!();
                 });
               } else {
                 _showNoSignInFunctionError();
@@ -221,8 +221,8 @@ class _AuthOptionsState extends State<AuthOptions> {
                   bottom: BorderSide(
                     color: Theme.of(context)
                         .textTheme
-                        .bodyText1
-                        .color
+                        .bodyText1!
+                        .color!
                         .withOpacity(0.5),
                   ),
                 ),
@@ -237,8 +237,8 @@ class _AuthOptionsState extends State<AuthOptions> {
                 fontSize: 14.0,
                 color: Theme.of(context)
                     .textTheme
-                    .bodyText1
-                    .color
+                    .bodyText1!
+                    .color!
                     .withOpacity(0.5),
               ),
               textAlign: TextAlign.center,
@@ -251,8 +251,8 @@ class _AuthOptionsState extends State<AuthOptions> {
                   bottom: BorderSide(
                     color: Theme.of(context)
                         .textTheme
-                        .bodyText1
-                        .color
+                        .bodyText1!
+                        .color!
                         .withOpacity(0.5),
                   ),
                 ),

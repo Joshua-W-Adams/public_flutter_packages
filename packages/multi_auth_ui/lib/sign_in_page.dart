@@ -15,25 +15,25 @@ class SignInPage extends StatelessWidget {
   final Function() billingTermsCallback;
   final Function() privacyPolicyCallback;
   final List<String> authProviders;
-  final Future Function() signInAnonymously;
-  final Future Function() signInWithGoogle;
-  final Future Function() signInWithFacebook;
-  final Future Function() signInWithApple;
-  final Function() emailSignInCallback;
-  final String linkCredentialsErrorMessage;
-  final Function(dynamic credentials) linkCredentialsCallback;
+  final Future Function()? signInAnonymously;
+  final Future Function()? signInWithGoogle;
+  final Future Function()? signInWithFacebook;
+  final Future Function()? signInWithApple;
+  final Function()? emailSignInCallback;
+  final String? linkCredentialsErrorMessage;
+  final Function(dynamic credentials)? linkCredentialsCallback;
 
   const SignInPage({
-    Key key,
-    @required this.appIconFilePath,
+    Key? key,
+    required this.appIconFilePath,
     this.appIconHeight = 50,
     this.appIconWidth = 50,
-    @required this.appTextFilePath,
+    required this.appTextFilePath,
     this.appTextHeight = 12,
-    @required this.termsOfUseCallback,
-    @required this.billingTermsCallback,
-    @required this.privacyPolicyCallback,
-    @required this.authProviders,
+    required this.termsOfUseCallback,
+    required this.billingTermsCallback,
+    required this.privacyPolicyCallback,
+    required this.authProviders,
     this.signInAnonymously,
     this.signInWithGoogle,
     this.signInWithFacebook,

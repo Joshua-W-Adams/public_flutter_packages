@@ -5,9 +5,9 @@ class EmailVerificationPage extends StatefulWidget {
   final Future Function() sendVerificationEmail;
 
   EmailVerificationPage({
-    Key key,
-    @required this.signOut,
-    @required this.sendVerificationEmail,
+    Key? key,
+    required this.signOut,
+    required this.sendVerificationEmail,
   }) : super(key: key);
 
   @override
@@ -16,7 +16,7 @@ class EmailVerificationPage extends StatefulWidget {
 
 class _EmailVerificationPageState extends State<EmailVerificationPage> {
   bool _emailRequestPending = false;
-  String _serverResponse = '';
+  String? _serverResponse = '';
 
   Map<String, String> _errors = {
     'ERROR_TOO_MANY_REQUESTS': 'Too many requests. Please try again later.'
@@ -65,7 +65,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       child: RichText(
         text: TextSpan(
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodyText1.color,
+            color: Theme.of(context).textTheme.bodyText1!.color,
           ),
           text:
               'Please check your inbox to verify your email. If you have not recieved a verification email please press the button below to resend the email.',
@@ -94,7 +94,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
   Widget _buildServerMessage() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Text(_serverResponse),
+      child: Text(_serverResponse!),
     );
   }
 
@@ -116,9 +116,7 @@ class _EmailVerificationPageState extends State<EmailVerificationPage> {
       appBar: PageAppBar(
         title: 'Email Verification',
         backButtonOnPressed: () {
-          if (widget.signOut != null) {
-            widget.signOut();
-          }
+          widget.signOut();
         },
       ),
       body: _getWebDisplay(

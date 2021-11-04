@@ -1,15 +1,15 @@
 part of multi_auth_ui;
 
 class EmailPasswordSignInPageBuilder extends StatelessWidget {
-  final VoidCallback onSignedIn;
+  final VoidCallback? onSignedIn;
   final EmailPasswordSignInBloc bloc;
-  final String initialEmail;
-  final String initialPassword;
+  final String? initialEmail;
+  final String? initialPassword;
 
   const EmailPasswordSignInPageBuilder({
-    Key key,
+    Key? key,
     this.onSignedIn,
-    @required this.bloc,
+    required this.bloc,
     this.initialEmail,
     this.initialPassword,
   }) : super(key: key);
@@ -17,7 +17,7 @@ class EmailPasswordSignInPageBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// [UiStreamBuilder] handles all generic stream errors
-    return UiStreamBuilder(
+    return UiStreamBuilder<EmailPasswordSignInBloc?>(
       stream: bloc.stream,
       builder: (_, snapshot) {
         return EmailPasswordSignInPage(
@@ -32,14 +32,14 @@ class EmailPasswordSignInPageBuilder extends StatelessWidget {
 }
 
 class EmailPasswordSignInPage extends StatefulWidget {
-  final EmailPasswordSignInBloc bloc;
-  final VoidCallback onSignedIn;
-  final String initialEmail;
-  final String initialPassword;
+  final EmailPasswordSignInBloc? bloc;
+  final VoidCallback? onSignedIn;
+  final String? initialEmail;
+  final String? initialPassword;
 
   const EmailPasswordSignInPage({
-    Key key,
-    @required this.bloc,
+    Key? key,
+    required this.bloc,
     this.onSignedIn,
     this.initialEmail,
     this.initialPassword,
@@ -54,7 +54,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  EmailPasswordSignInBloc get bloc {
+  EmailPasswordSignInBloc? get bloc {
     return widget.bloc;
   }
 
@@ -62,12 +62,12 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   void initState() {
     // set default values of email and password if provided
     if (widget.initialEmail != null) {
-      _emailController.text = widget.initialEmail;
-      widget.bloc.email = widget.initialEmail;
+      _emailController.text = widget.initialEmail!;
+      widget.bloc!.email = widget.initialEmail;
     }
     if (widget.initialPassword != null) {
-      _passwordController.text = widget.initialPassword;
-      widget.bloc.password = widget.initialPassword;
+      _passwordController.text = widget.initialPassword!;
+      widget.bloc!.password = widget.initialPassword;
     }
     super.initState();
   }
@@ -82,16 +82,16 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   void _showSignInError(EmailPasswordSignInBloc bloc, dynamic exception) {
     showExceptionAlertDialog(
       context: context,
-      title: bloc.errorAlertTitle,
+      title: bloc.errorAlertTitle!,
       exception: exception,
     );
   }
 
   Future<void> _submit() async {
     try {
-      final bool success = await bloc.submit();
+      final bool success = await bloc!.submit();
       if (success) {
-        if (bloc.formType == EmailPasswordSignInFormType.forgotPassword) {
+        if (bloc!.formType == EmailPasswordSignInFormType.forgotPassword) {
           await showAlertDialog(
             context: context,
             title: 'Reset Link Sent',
@@ -100,18 +100,16 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
             defaultActionText: 'ok',
           );
         } else {
-          if (widget.onSignedIn != null) {
-            widget.onSignedIn();
-          }
+          widget.onSignedIn?.call();
         }
       }
     } catch (e) {
-      _showSignInError(bloc, e);
+      _showSignInError(bloc!, e);
     }
   }
 
-  void _updateFormType(EmailPasswordSignInFormType formType) {
-    bloc.updateFormType(formType);
+  void _updateFormType(EmailPasswordSignInFormType? formType) {
+    bloc!.updateFormType(formType);
     _emailController.clear();
     _passwordController.clear();
   }
@@ -123,11 +121,12 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       controller: _emailController,
       decoration: InputDecoration(
         labelText: 'Email',
-        errorText: bloc.emailErrorText,
+        errorText: bloc!.emailErrorText,
         // enabled: !bloc.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+            color:
+                Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.4),
             width: 2.0,
           ),
         ),
@@ -135,9 +134,9 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       autocorrect: false,
       keyboardType: TextInputType.emailAddress,
       keyboardAppearance: Brightness.light,
-      onChanged: bloc.updateEmail,
+      onChanged: bloc!.updateEmail,
       inputFormatters: <TextInputFormatter>[
-        bloc.emailInputFormatter,
+        bloc!.emailInputFormatter,
       ],
     );
   }
@@ -148,12 +147,13 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       autofillHints: [AutofillHints.password],
       controller: _passwordController,
       decoration: InputDecoration(
-        labelText: bloc.passwordLabelText,
-        errorText: bloc.passwordErrorText,
+        labelText: bloc!.passwordLabelText,
+        errorText: bloc!.passwordErrorText,
         // enabled: !bloc.isLoading,
         border: OutlineInputBorder(
           borderSide: BorderSide(
-            color: Theme.of(context).textTheme.bodyText1.color.withOpacity(0.4),
+            color:
+                Theme.of(context).textTheme.bodyText1!.color!.withOpacity(0.4),
             width: 2.0,
           ),
         ),
@@ -161,7 +161,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
       obscureText: true,
       autocorrect: false,
       keyboardAppearance: Brightness.light,
-      onChanged: bloc.updatePassword,
+      onChanged: bloc!.updatePassword,
       onSubmitted: (String value) {
         _submit();
       },
@@ -183,7 +183,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
           child: Column(
             children: [
               _buildEmailField(),
-              if (bloc.formType !=
+              if (bloc!.formType !=
                   EmailPasswordSignInFormType.forgotPassword) ...<Widget>[
                 SizedBox(height: 16.0),
                 _buildPasswordField(),
@@ -194,9 +194,9 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
         SizedBox(height: 16.0),
         CustomRaisedButton(
           key: Key('primary-button'),
-          child: Text(bloc.primaryButtonText),
-          loading: bloc.isLoading,
-          onPressed: bloc.isLoading
+          child: Text(bloc!.primaryButtonText!),
+          loading: bloc!.isLoading,
+          onPressed: bloc!.isLoading
               ? null
               : () {
                   _clearFocus();
@@ -204,23 +204,23 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
                 },
           disabledColor: Theme.of(context).canvasColor,
           color: Theme.of(context).primaryColor,
-          textColor: Theme.of(context).primaryTextTheme.bodyText1.color,
+          textColor: Theme.of(context).primaryTextTheme.bodyText1!.color,
         ),
         SizedBox(height: 16.0),
         TextButton(
           key: Key('secondary-button'),
-          child: Text(bloc.secondaryButtonText),
-          onPressed: bloc.isLoading
+          child: Text(bloc!.secondaryButtonText!),
+          onPressed: bloc!.isLoading
               ? null
               : () {
-                  return _updateFormType(bloc.secondaryActionFormType);
+                  return _updateFormType(bloc!.secondaryActionFormType);
                 },
         ),
-        if (bloc.formType == EmailPasswordSignInFormType.signIn)
+        if (bloc!.formType == EmailPasswordSignInFormType.signIn)
           TextButton(
             key: Key('tertiary-button'),
             child: Text('Forgot your password?'),
-            onPressed: bloc.isLoading
+            onPressed: bloc!.isLoading
                 ? null
                 : () {
                     return _updateFormType(
@@ -247,7 +247,7 @@ class _EmailPasswordSignInPageState extends State<EmailPasswordSignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PageAppBar(
-        title: bloc.title,
+        title: bloc!.title!,
       ),
       body: _getWebDisplay(
         SingleChildScrollView(

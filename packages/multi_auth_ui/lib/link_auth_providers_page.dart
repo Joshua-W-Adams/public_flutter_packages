@@ -2,14 +2,14 @@ part of multi_auth_ui;
 
 class LinkAuthProvidersPage extends StatelessWidget {
   final List<String> authProviders;
-  final Future Function() signInAnonymously;
-  final Future Function() signInWithGoogle;
-  final Future Function() signInWithFacebook;
-  final Future Function() signInWithApple;
-  final Function() emailSignInCallback;
+  final Future Function()? signInAnonymously;
+  final Future Function()? signInWithGoogle;
+  final Future Function()? signInWithFacebook;
+  final Future Function()? signInWithApple;
+  final Function()? emailSignInCallback;
 
   LinkAuthProvidersPage({
-    @required this.authProviders,
+    required this.authProviders,
     this.signInAnonymously,
     this.signInWithGoogle,
     this.signInWithFacebook,
@@ -23,7 +23,7 @@ class LinkAuthProvidersPage extends StatelessWidget {
       child: RichText(
         text: TextSpan(
           style: TextStyle(
-            color: Theme.of(context).textTheme.bodyText1.color,
+            color: Theme.of(context).textTheme.bodyText1!.color,
           ),
           text:
               'Account already exists using a different sign in method. Please sign in with one of the existing methods to link them.',

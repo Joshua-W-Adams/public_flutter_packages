@@ -3,16 +3,16 @@ part of multi_auth_ui;
 enum EmailPasswordSignInFormType { signIn, register, forgotPassword }
 
 class EmailPasswordSignInBloc with EmailAndPasswordValidators {
-  String email;
-  String password;
+  String? email;
+  String? password;
   EmailPasswordSignInFormType formType;
   bool isLoading;
   bool submitted;
-  final Future Function(String email, String password)
+  final Future Function(String? email, String? password)
       signInWithEmailAndPassword;
-  final Future Function(String email, String password)
+  final Future Function(String? email, String? password)
       createUserWithEmailAndPassword;
-  final Future Function(String email) sendPasswordResetEmail;
+  final Future Function(String? email) sendPasswordResetEmail;
 
   /// create stream controller
   StreamController<EmailPasswordSignInBloc> _controller =
@@ -24,9 +24,9 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     this.formType = EmailPasswordSignInFormType.signIn,
     this.isLoading = false,
     this.submitted = false,
-    @required this.signInWithEmailAndPassword,
-    @required this.createUserWithEmailAndPassword,
-    @required this.sendPasswordResetEmail,
+    required this.signInWithEmailAndPassword,
+    required this.createUserWithEmailAndPassword,
+    required this.sendPasswordResetEmail,
   }) {
     /// initialise stream
     _controller.sink.add(this);
@@ -71,7 +71,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     updateWith(password: password);
   }
 
-  void updateFormType(EmailPasswordSignInFormType formType) {
+  void updateFormType(EmailPasswordSignInFormType? formType) {
     updateWith(
       email: '',
       password: '',
@@ -82,11 +82,11 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
   }
 
   void updateWith({
-    String email,
-    String password,
-    EmailPasswordSignInFormType formType,
-    bool isLoading,
-    bool submitted,
+    String? email,
+    String? password,
+    EmailPasswordSignInFormType? formType,
+    bool? isLoading,
+    bool? submitted,
   }) {
     this.email = email ?? this.email;
     this.password = password ?? this.password;
@@ -104,7 +104,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
   }
 
   // Getters
-  String get primaryButtonText {
+  String? get primaryButtonText {
     return <EmailPasswordSignInFormType, String>{
       EmailPasswordSignInFormType.register: 'Create',
       EmailPasswordSignInFormType.signIn: 'Sign In',
@@ -112,7 +112,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     }[formType];
   }
 
-  String get secondaryButtonText {
+  String? get secondaryButtonText {
     return <EmailPasswordSignInFormType, String>{
       EmailPasswordSignInFormType.register: 'Already have an account?',
       EmailPasswordSignInFormType.signIn: 'Need an account?',
@@ -120,7 +120,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     }[formType];
   }
 
-  EmailPasswordSignInFormType get secondaryActionFormType {
+  EmailPasswordSignInFormType? get secondaryActionFormType {
     return <EmailPasswordSignInFormType, EmailPasswordSignInFormType>{
       EmailPasswordSignInFormType.register: EmailPasswordSignInFormType.signIn,
       EmailPasswordSignInFormType.signIn: EmailPasswordSignInFormType.register,
@@ -129,7 +129,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     }[formType];
   }
 
-  String get errorAlertTitle {
+  String? get errorAlertTitle {
     return <EmailPasswordSignInFormType, String>{
       EmailPasswordSignInFormType.register: 'Registration failed',
       EmailPasswordSignInFormType.signIn: 'Sign in failed',
@@ -137,7 +137,7 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     }[formType];
   }
 
-  String get title {
+  String? get title {
     return <EmailPasswordSignInFormType, String>{
       EmailPasswordSignInFormType.register: 'Register',
       EmailPasswordSignInFormType.signIn: 'Sign In',
@@ -164,17 +164,17 @@ class EmailPasswordSignInBloc with EmailAndPasswordValidators {
     return canSubmitFields && !isLoading;
   }
 
-  String get emailErrorText {
+  String? get emailErrorText {
     final bool showErrorText = submitted && !canSubmitEmail;
     final String errorText =
-        email.isEmpty ? 'Email Empty' : 'Incorrect Email Format';
+        email!.isEmpty ? 'Email Empty' : 'Incorrect Email Format';
     return showErrorText ? errorText : null;
   }
 
-  String get passwordErrorText {
+  String? get passwordErrorText {
     final bool showErrorText = submitted && !canSubmitPassword;
     final String errorText =
-        password.isEmpty ? 'Password Empty' : 'Password Too Short';
+        password!.isEmpty ? 'Password Empty' : 'Password Too Short';
     return showErrorText ? errorText : null;
   }
 
