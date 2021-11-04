@@ -3,16 +3,16 @@ part of auth_service;
 @immutable
 class MockUser {
   final String uid;
-  final String email;
+  final String? email;
 
   const MockUser({
-    @required this.uid,
+    required this.uid,
     this.email,
   });
 }
 
 class _UserData {
-  _UserData({@required this.password, @required this.user});
+  _UserData({required this.password, required this.user});
   final String password;
   final MockUser user;
 }
@@ -24,8 +24,8 @@ class MockAuthService implements AuthService {
   final Duration startupTime;
   final Duration responseTime;
   final Map<String, _UserData> _usersStore = <String, _UserData>{};
-  final StreamController<MockUser> _onAuthStateChangedController =
-      StreamController<MockUser>();
+  final StreamController<MockUser?> _onAuthStateChangedController =
+      StreamController<MockUser?>();
 
   MockAuthService({
     this.startupTime = const Duration(milliseconds: 250),
@@ -53,11 +53,11 @@ class MockAuthService implements AuthService {
     );
   }
 
-  Stream<MockUser> get onAuthStateChanged {
+  Stream<MockUser?> get onAuthStateChanged {
     return _onAuthStateChangedController.stream;
   }
 
-  Future<void> createUserWithEmailAndPassword(
+  Future<MockUser?> createUserWithEmailAndPassword(
     String email,
     String password,
   ) async {
@@ -74,7 +74,8 @@ class MockAuthService implements AuthService {
     return user;
   }
 
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
+  Future<MockUser?> signInWithEmailAndPassword(
+      String email, String password) async {
     await Future<void>.delayed(responseTime);
     if (!_usersStore.keys.contains(email)) {
       throw PlatformException(
@@ -82,7 +83,7 @@ class MockAuthService implements AuthService {
         message: 'The email address is not registered. Need an account?',
       );
     }
-    final _UserData _userData = _usersStore[email];
+    final _UserData _userData = _usersStore[email]!;
     if (_userData.password != password) {
       throw PlatformException(
         code: 'ERROR_WRONG_PASSWORD',
@@ -95,7 +96,8 @@ class MockAuthService implements AuthService {
 
   Future<void> sendPasswordResetEmail(String email) async {}
 
-  Future<void> signInWithEmailAndLink({String email, String link}) async {
+  Future<MockUser?> signInWithEmailAndLink(
+      {String? email, String? link}) async {
     await Future<void>.delayed(responseTime);
     final MockUser user = MockUser(uid: getRandomString(32));
     _add(user);
@@ -106,32 +108,35 @@ class MockAuthService implements AuthService {
     _add(null);
   }
 
-  void _add(MockUser user) {
+  void _add(MockUser? user) {
     _onAuthStateChangedController.add(user);
   }
 
-  Future<void> signInAnonymously() async {
+  Future<MockUser?> signInAnonymously() async {
     await Future<void>.delayed(responseTime);
     final MockUser user = MockUser(uid: getRandomString(32));
     _add(user);
     return user;
   }
 
-  Future<void> signInWithFacebook() async {
+  Future<MockUser?> signInWithFacebook() async {
     await Future<void>.delayed(responseTime);
     final MockUser user = MockUser(uid: getRandomString(32));
     _add(user);
     return user;
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<MockUser?> signInWithGoogle() async {
     await Future<void>.delayed(responseTime);
     final MockUser user = MockUser(uid: getRandomString(32));
     _add(user);
     return user;
   }
 
-  Future<void> signInWithApple() async {
+  Future<MockUser?> signInWithApple({
+    required String redirectUri,
+    required String clientId,
+  }) async {
     await Future<void>.delayed(responseTime);
     final MockUser user = MockUser(uid: getRandomString(32));
     _add(user);

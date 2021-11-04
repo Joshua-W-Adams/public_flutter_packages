@@ -5,12 +5,12 @@ part of auth_service;
 class LinkCredentials {
   String email;
   List<String> providers;
-  AuthCredential credentialToLink;
+  AuthCredential? credentialToLink;
 
   LinkCredentials({
-    @required this.email,
-    @required this.providers,
-    @required this.credentialToLink,
+    required this.email,
+    required this.providers,
+    required this.credentialToLink,
   });
 }
 
@@ -25,12 +25,12 @@ class FirebaseAuthService implements AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // create new stream that checks for authorisation state changes
-  StreamController<User> _authStream = StreamController<User>();
+  StreamController<User?> _authStream = StreamController<User?>();
 
   FirebaseAuthService() {
     // listen to the on auth state changed stream
     _firebaseAuth.authStateChanges().listen(
-      (User user) async {
+      (User? user) async {
         /// fires correctly on browser refresh when cache is cleared
         _authStream.add(user);
       },
@@ -48,7 +48,7 @@ class FirebaseAuthService implements AuthService {
   // application will be rebuilt when updates from firebase are issued through
   // this stream.
   // getter - defined using the get keyword - allows retrieval of a value from a class
-  Stream<User> get onAuthStateChanged {
+  Stream<User?> get onAuthStateChanged {
     return _authStream.stream;
   }
 
@@ -59,7 +59,7 @@ class FirebaseAuthService implements AuthService {
   /// the application specific user model into the app.
   ///
   Future<void> signInAnonymously({
-    AuthCredential authCredentialtoLink,
+    AuthCredential? authCredentialtoLink,
   }) async {
     await _firebaseAuth.signInAnonymously();
   }
@@ -67,9 +67,9 @@ class FirebaseAuthService implements AuthService {
   Future<void> signInWithEmailAndPassword(
     String email,
     String password, {
-    AuthCredential authCredentialtoLink,
+    AuthCredential? authCredentialtoLink,
   }) async {
-    AuthCredential credential;
+    AuthCredential? credential;
     // attempt to sign in and link credentials if passed
     try {
       // get email credentials to sign in with
@@ -83,7 +83,7 @@ class FirebaseAuthService implements AuthService {
         credential,
       );
       // save user result
-      User user = authResult.user;
+      User? user = authResult.user;
       // user logged into firebase
       if (user != null && authCredentialtoLink != null) {
         // if authorisation credetials from a different provider passed. Link them.
@@ -116,11 +116,11 @@ class FirebaseAuthService implements AuthService {
   }
 
   Future<void> signInWithGoogle({
-    AuthCredential authCredentialtoLink,
+    AuthCredential? authCredentialtoLink,
   }) async {
-    User user;
-    GoogleSignInAccount googleUser;
-    AuthCredential credential;
+    User? user;
+    GoogleSignInAccount? googleUser;
+    AuthCredential? credential;
     // flag to check whether current\ google user is already signed in
     bool isSignedIn = await _googleSignIn.isSignedIn();
     if (isSignedIn) {
@@ -165,7 +165,7 @@ class FirebaseAuthService implements AuthService {
     } catch (error) {
       if (error is PlatformException) {
         if (error.code == "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") {
-          String email = googleUser.email;
+          String email = googleUser!.email;
           // fetch available providers for the email
           List<String> providers =
               await _firebaseAuth.fetchSignInMethodsForEmail(email);
@@ -373,8 +373,8 @@ class FirebaseAuthService implements AuthService {
 
   String _createNonce(int length) {
     final random = Random();
-    final charCodes = List<int>.generate(length, (_) {
-      int codeUnit;
+    final charCodes = List<int?>.generate(length, (_) {
+      int? codeUnit;
       switch (random.nextInt(3)) {
         case 0:
           codeUnit = random.nextInt(10) + 48;
@@ -388,13 +388,13 @@ class FirebaseAuthService implements AuthService {
       }
       return codeUnit;
     });
-    return String.fromCharCodes(charCodes);
+    return String.fromCharCodes(charCodes as Iterable<int>);
   }
 
   Future<void> signInWithApple({
-    AuthCredential authCredentialtoLink,
-    String redirectUri,
-    String clientId,
+    AuthCredential? authCredentialtoLink,
+    required String redirectUri,
+    required String clientId,
   }) async {
     // login not supported by web.
     if (kIsWeb) {
@@ -440,7 +440,7 @@ class FirebaseAuthService implements AuthService {
     );
 
     try {
-      User user = (await _firebaseAuth.signInWithCredential(credential)).user;
+      User? user = (await _firebaseAuth.signInWithCredential(credential)).user;
       // if authorisation credetials from a different provider passed. Link them.
       if (user != null && authCredentialtoLink != null) {
         user.linkWithCredential(authCredentialtoLink);
@@ -449,7 +449,7 @@ class FirebaseAuthService implements AuthService {
       if (error is PlatformException &&
           error.code == "ERROR_ACCOUNT_EXISTS_WITH_DIFFERENT_CREDENTIAL") {
         // get email address
-        String email = nativeAppleCred.email;
+        String email = nativeAppleCred.email!;
         // fetch providers for the email
         List<String> providers =
             await _firebaseAuth.fetchSignInMethodsForEmail(email);
@@ -493,7 +493,7 @@ class FirebaseAuthService implements AuthService {
     if (authResult.user != null) {
       try {
         // send verification email to user account
-        authResult.user.sendEmailVerification();
+        authResult.user!.sendEmailVerification();
       } catch (error) {
         // print(error);
       }
@@ -507,9 +507,9 @@ class FirebaseAuthService implements AuthService {
   // ********************************** Email Verfication Methods *******************
 
   // private variables for handling email verification timer checks
-  Timer _timer;
-  Timer _timeout;
-  User _firebaseUser;
+  Timer? _timer;
+  Timer? _timeout;
+  User? _firebaseUser;
 
   void addToAuthStream() {
     // refire the stream with the last firebase user profile recieved
@@ -522,11 +522,11 @@ class FirebaseAuthService implements AuthService {
       Duration(seconds: 1),
       (timer) async {
         // reload current user data
-        await _firebaseAuth.currentUser
+        await _firebaseAuth.currentUser!
           ..reload();
         _firebaseUser = _firebaseAuth.currentUser;
         // if user email is verified cancel timer
-        if (_firebaseUser.emailVerified) {
+        if (_firebaseUser!.emailVerified) {
           // refresh id token to ensure updated email verified status is sent
           // with all requests.
           // force refresh of token claim
@@ -539,8 +539,8 @@ class FirebaseAuthService implements AuthService {
     );
     _timeout = Timer.periodic(Duration(minutes: 10), (timer) {
       // cancel all timers if user has been afk for 10 minutes or longer
-      _timer.cancel();
-      _timeout.cancel();
+      _timer!.cancel();
+      _timeout!.cancel();
     });
   }
 
@@ -550,16 +550,12 @@ class FirebaseAuthService implements AuthService {
       checkForEmailVerificationStatus();
     }
     // send verification email from firebase.
-    await _firebaseUser.sendEmailVerification();
+    await _firebaseUser!.sendEmailVerification();
   }
 
   // kill timers when no longer required to prevent memory leaks
   void disposeTimers() {
-    if (_timer != null) {
-      _timer.cancel();
-    }
-    if (_timeout != null) {
-      _timeout.cancel();
-    }
+    _timer?.cancel();
+    _timeout?.cancel();
   }
 }

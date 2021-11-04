@@ -11,7 +11,8 @@ abstract class AuthService {
   );
   Future<void> signInWithGoogle();
   // Future<void> signInWithFacebook();
-  Future<void> signInWithApple();
+  Future<void> signInWithApple(
+      {required String redirectUri, required String clientId});
   Future<void> signOut();
   // user creation methods
   Future<void> createUserWithEmailAndPassword(String email, String password);

@@ -4,7 +4,7 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0 <2.0.0"
 
 dependencies:
@@ -13,11 +13,11 @@ dependencies:
   # http:
   crypto:
   firebase_auth:
-  google_sign_in: ^4.1.0
+  google_sign_in: ^5.2.1
   # support for flutter_facebook_login dropped as it causes conflicts with the 
   # flutter image_picker library.
   # flutter_facebook_login: ^3.0.0
-  sign_in_with_apple: ^2.5.2
+  sign_in_with_apple: ^3.2.0
   # old facebook sign in web support library
   # https://stackoverflow.com/questions/62471919/flutter-facebook-login-in-web
   # flutter facebook login is causing errors in the build process of the application which
